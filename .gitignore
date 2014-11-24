@@ -1,2 +1,8 @@
 
 *.iso
+
+*.vdi
+
+*.box
+
+.vagrant

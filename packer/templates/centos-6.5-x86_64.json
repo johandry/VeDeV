@@ -9,7 +9,7 @@
     "vm_name": "packer-centos-6.5-x86_64",
     "disk_size": "{{user `disk_size`}}",
     "headless": "{{user `headless`}}",
-    "http_directory": "http",
+    "http_directory": "packer/http",
     "boot_wait": "5s",
     "boot_command": [
       "<esc>",
