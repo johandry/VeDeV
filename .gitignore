@@ -6,3 +6,9 @@
 *.box
 
 .vagrant
+
+vagrant/*
+
+packer_cache
+
+Trash
