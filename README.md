@@ -10,35 +10,35 @@ As Docker require a virtual machine manager in OS X and Windows, vedev use Vagra
 
 ### Mac OS X
 
-[Homebrew](http://brew.sh/): (Optional) Used to install all Brew-Cask and this to install all the main requirements. If not used, Homebrew Cask is not required and the required software will be installed manually.
+* [Homebrew](http://brew.sh/): (Optional) Used to install all Brew-Cask and this to install all the main requirements. If not used, Homebrew Cask is not required and the required software will be installed manually.
 
     $ ruby -e "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/master/install)"
 
-[Homebrew Cask](http://caskroom.io/): (Optional) Used to install all the requirements. If not used, the required software will be installed manually.
+* [Homebrew Cask](http://caskroom.io/): (Optional) Used to install all the requirements. If not used, the required software will be installed manually.
 
     $ brew install caskroom/cask/brew-cask
 
-[Packer](http://www.packer.io/): (Required) Used to create the vagrant box. Or, to create the Docker image if you are using Linux.
+* [Packer](http://www.packer.io/): (Required) Used to create the vagrant box. Or, to create the Docker image if you are using Linux.
 
     $ brew cask install packer
 
-[Vagrant](https://www.vagrantup.com/): (Required) Used to manage the virtual machine.
+* [Vagrant](https://www.vagrantup.com/): (Required) Used to manage the virtual machine.
 
     $ brew cask install vagrant
 
-[VirtualBox](https://www.virtualbox.org/): (Required) Virtualization software to run the virtual machine.
+* [VirtualBox](https://www.virtualbox.org/): (Required) Virtualization software to run the virtual machine.
 
     $ brew cask install virtualbox
 
-[Vagrant Manager](http://vagrantmanager.com/): (Optional) GUI for Vagrant. It is optional but would be nice to have it.
+* [Vagrant Manager](http://vagrantmanager.com/): (Optional) GUI for Vagrant. It is optional but would be nice to have it.
 
     $ brew cask install vagrant-manager
 
-[Docker](https://www.docker.com/): (Required) Used to build, ship and run the developed application.
+* [Docker](https://www.docker.com/): (Required) Used to build, ship and run the developed application.
 
 TODO
 
-[Puppet](http://puppetlabs.com/): (Required) Used to provision the new vagrant box. Puppet and Shell scripts will do the initial and base provisioning.
+* [Puppet](http://puppetlabs.com/): (Required) Used to provision the new vagrant box. Puppet and Shell scripts will do the initial and base provisioning.
 
 TODO
 
