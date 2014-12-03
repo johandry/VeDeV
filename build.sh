@@ -88,48 +88,60 @@ list_distros () {
 }
 
 clean_boxes () {
+  [[ ! -f "${SCRIPT_DIR}"/vagrant/boxes/*.box ]] && echo "No boxes to clean" && return
   d=$(date +%Y%m%d)
-  warning "Moving $(\ls -1 *.box | wc -l | sed 's/ //g') boxes to Trash/${d}"
+  warning "Moving $(\ls -1 ${SCRIPT_DIR}/vagrant/boxes/*.box | wc -l | sed 's/ //g') boxes to Trash/${d}/boxes"
   mkdir -p "${SCRIPT_DIR}/Trash/${d}"
-  mv -f "${SCRIPT_DIR}"/*.box "${SCRIPT_DIR}"/Trash/${d}/
+  mv -f "${SCRIPT_DIR}"/vagrant/boxes/ "${SCRIPT_DIR}"/Trash/${d}/
+  echo
 }
 
 clean_cache () {
+  [[ ! -d "${SCRIPT_DIR}"/packer_cache ]] && echo "No packer cache to clean" && return
   d=$(date +%Y%m%d)
   warning "Moving Packer Cache to Trash/${d}"
   mkdir -p "${SCRIPT_DIR}/Trash/${d}"
-  mv "${SCRIPT_DIR}"/packer_cache "${SCRIPT_DIR}"/Trash/${d}/
+  mv -f "${SCRIPT_DIR}"/packer_cache "${SCRIPT_DIR}"/Trash/${d}/
+  echo
 }
 
 # Move to trash every box and remove every vagrant environment created.
 clean_vagrant() {
-  d=$(date +%Y%m%d)
-  mkdir -p "${SCRIPT_DIR}/Trash/${d}"
-  total=$(${VAGRANT} box list | wc -l | sed 's/ //g')
-  count=$(\ls -1d "${SCRIPT_DIR}"/vagrant/* | wc -l | sed 's/ //g')
-  for box in "${SCRIPT_DIR}"/vagrant/*
-  do
-    old_PWD=$(pwd)
-    cd ${box}
-    warning "Destroying vagrant box 'vagrant-${box##*/}'"
-    ${VAGRANT} destroy -f
-    warning "Removing vagrant box 'vagrant-${box##*/}'"
-    ${VAGRANT} box remove vagrant-${box##*/}
-    warning "Moving vagrant box 'vagrant-${box##*/}' to Trash/${d}"
-    mv "${box}" "${SCRIPT_DIR}"/Trash/${d}/
-    cd ${old_PWD}
-  done
+  total=$(${VAGRANT} box list | grep -v 'no installed boxes' | wc -l | sed 's/ //g')
+  count=0
+  if [[ -d "${SCRIPT_DIR}"/vagrant ]]
+    then
+    count=$(\ls -1d "${SCRIPT_DIR}"/vagrant/* | grep -v boxes | wc -l | sed 's/ //g')
+    if [[ ${count} -ne 0 ]]
+      then
+      d=$(date +%Y%m%d)
+      mkdir -p "${SCRIPT_DIR}/Trash/${d}"
+      for box in "${SCRIPT_DIR}"/vagrant/*
+      do
+        if [[ -e ${box} && ${box} != "${SCRIPT_DIR}"/vagrant/boxes ]]
+          then
+          old_PWD=$(pwd)
+          cd ${box}
+          warning "Destroying vagrant box 'vagrant-${box##*/}'"
+          ${VAGRANT} destroy -f
+          warning "Removing vagrant box 'vagrant-${box##*/}'"
+          ${VAGRANT} box remove vagrant-${box##*/}
+          warning "Moving vagrant box 'vagrant-${box##*/}' to Trash/${d}"
+          mv -f "${box}" "${SCRIPT_DIR}"/Trash/${d}/
+          cd ${old_PWD}
+        fi
+      done
+      echo
+    fi
+  fi
+  echo "Removed ${count}/${total} vagrant boxes"
   echo
-  warning "Removed ${count}/${total} vagrant boxes"
 }
 
 clean_all () {
   clean_cache
-  echo
   clean_boxes
-  echo
   clean_vagrant
-  echo
 }
 
 # Process the options or parameters for this script
@@ -314,13 +326,16 @@ packer_build () {
   echo "Building box for ${DISTRO}"
   echo
   ${PACKER} build "${SCRIPT_DIR}/packer/templates/${DISTRO}.json"
+  # This can be implemented with builders/output_directory in the packer template json file
+  mkdir -p "${SCRIPT_DIR}"/vagrant/boxes
+  mv -f "${SCRIPT_DIR}/${DISTRO}.box" "${SCRIPT_DIR}"/vagrant/boxes/
 }
 
 # Build the Vagrant box for the requested distro previously builded with Packer
 vagrant_build () {
   echo "Creating vagrant environment"
   echo
-  ${VAGRANT} box add "vagrant-${DISTRO}" "${SCRIPT_DIR}/${DISTRO}.box"
+  ${VAGRANT} box add "vagrant-${DISTRO}" "${SCRIPT_DIR}/vagrant/boxes/${DISTRO}.box"
   old_PWD=$(pwd)
   mkdir -p "${SCRIPT_DIR}/vagrant/${DISTRO}" && cd "${SCRIPT_DIR}/vagrant/${DISTRO}"
   ${VAGRANT} init "vagrant-${DISTRO}"
