@@ -40,7 +40,7 @@
   "post-processors": [{
     "type": "vagrant",
     "compression_level": "{{user `compression_level`}}",
-    "output": "centos-6.5-x86_64.box"
+    "output": "vagrant/boxes/centos-6.5-x86_64.box"
   }],
   "variables": {
     "compression_level": 6,

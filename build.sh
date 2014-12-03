@@ -326,9 +326,6 @@ packer_build () {
   echo "Building box for ${DISTRO}"
   echo
   ${PACKER} build "${SCRIPT_DIR}/packer/templates/${DISTRO}.json"
-  # This can be implemented with builders/output_directory in the packer template json file
-  mkdir -p "${SCRIPT_DIR}"/vagrant/boxes
-  mv -f "${SCRIPT_DIR}/${DISTRO}.box" "${SCRIPT_DIR}"/vagrant/boxes/
 }
 
 # Build the Vagrant box for the requested distro previously builded with Packer
