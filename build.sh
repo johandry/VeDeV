@@ -109,7 +109,7 @@ clean_vagrant() {
   count=$(\ls -1d "${SCRIPT_DIR}"/vagrant/* | wc -l | sed 's/ //g')
   for box in "${SCRIPT_DIR}"/vagrant/*
   do
-    PWD=$(pwd)
+    old_PWD=$(pwd)
     cd ${box}
     warning "Destroying vagrant box 'vagrant-${box##*/}'"
     ${VAGRANT} destroy -f
@@ -117,6 +117,7 @@ clean_vagrant() {
     ${VAGRANT} box remove vagrant-${box##*/}
     warning "Moving vagrant box 'vagrant-${box##*/}' to Trash/${d}"
     mv "${box}" "${SCRIPT_DIR}"/Trash/${d}/
+    cd ${old_PWD}
   done
   echo
   warning "Removed ${count}/${total} vagrant boxes"
@@ -320,9 +321,11 @@ vagrant_build () {
   echo "Creating vagrant environment"
   echo
   ${VAGRANT} box add "vagrant-${DISTRO}" "${SCRIPT_DIR}/${DISTRO}.box"
-  mkdir -p "${SCRIPT_DIR}/vagrant/${DISTRO}/${DISTRO}.box" && cd "${SCRIPT_DIR}/vagrant/${DISTRO}"
+  old_PWD=$(pwd)
+  mkdir -p "${SCRIPT_DIR}/vagrant/${DISTRO}" && cd "${SCRIPT_DIR}/vagrant/${DISTRO}"
   ${VAGRANT} init "vagrant-${DISTRO}"
   ${VAGRANT} up
+  cd ${old_PWD}
 }
 
 #===============================================================================

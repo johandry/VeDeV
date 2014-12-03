@@ -58,17 +58,23 @@ Clone the repository:
 
 Build a machine image from the template in the repository:
 
-    $ packer build packer/templates/ubuntu-14.10-amd64.json
+    $ ./build.sh ubuntu-14.1
 
-## Configuration
+To know the available packer templates to build run this:
 
-You can configure each template to match your requirements by setting the following [user variables](https://packer.io/docs/templates/user-variables.html).
+    $ ./build.sh -l
 
- User Variable      | Default Value | Description
---------------------|---------------|----------------------------------------------------------------------------------------
- `compressin_level` | 6             | [Documentation](https://packer.io/docs/post-processors/vagrant.html#compression_level)
- `cpus`             | 1             | Number of CPUs
- `disk_size`        | 40000         | [Documentation](https://packer.io/docs/builders/virtualbox-iso.html#disk_size)
- `headless`         | 0             | [Documentation](https://packer.io/docs/builders/virtualbox-iso.html#headless)
- `memory`           | 512           | Memory size in MB
- `mirror`           |               | A URL of the mirror where the ISO image is available
+When you finish, you may clean the packer box with:
+
+    $ ./build.sh -c box
+
+Or, you may delete the packer cache or the vagrant environment with the options 'cache' and 'vagrant'. Or clean it all with option 'all'.
+
+Check the build.sh help for more details.
+
+    $ ./build.sh -h
+
+When the build is ready you can login to the vagrant box with:
+
+    $ cd vagrant/ubuntu-14.1* && vagrant ssh
+
