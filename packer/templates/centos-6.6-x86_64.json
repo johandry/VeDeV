@@ -2,22 +2,22 @@
   "builders": [{
     "type": "virtualbox-iso",
     "guest_os_type": "RedHat_64",
-    "iso_url": "{{user `mirror`}}/6.5/isos/x86_64/CentOS-6.5-x86_64-minimal.iso",
-    "iso_checksum": "f9d84907d77df62017944cb23cab66305e94ee6ae6c1126415b81cc5e999bdd0",
-    "iso_checksum_type": "sha256",
-    "output_directory": "output-centos-6.5-x86_64",
+    "iso_url": "{{user `mirror`}}/6.6/isos/x86_64/CentOS-6.6-x86_64-bin-DVD1.iso",
+    "iso_checksum": "08be09fd7276822bd3468af8f96198279ffc41f0",
+    "iso_checksum_type": "sha1",
+    "output_directory": "output-centos-6.6-x86_64",
     "vm_name": "packer-centos-6.5-x86_64",
     "disk_size": "{{user `disk_size`}}",
     "headless": "{{user `headless`}}",
     "http_directory": "packer/http",
-    "boot_wait": "5s",
+    "boot_wait": "10s",
     "boot_command": [
       "<esc>",
       "<wait>",
-      "linux ks=http://{{.HTTPIP}}:{{.HTTPPort}}/centos-6.5/anaconda-ks.cfg",
+      "linux ks=http://{{.HTTPIP}}:{{.HTTPPort}}/centos-6.6/anaconda-ks.cfg",
       "<enter>"
     ],
-    "ssh_wait_timeout": "60m",
+    "ssh_wait_timeout": "10000s",
     "ssh_username": "vagrant",
     "ssh_password": "vagrant",
     "shutdown_command": "sudo poweroff",
@@ -29,10 +29,13 @@
   "provisioners": [{
     "type": "shell",
     "scripts": [
-      "packer/scripts/centos/base.sh",
+      "packer/scripts/centos/6.6/repos.sh",
+      "packer/scripts/centos/6.6/base.sh",
       "packer/scripts/centos/virtualbox.sh",
       "packer/scripts/common/vagrant.sh",
       "packer/scripts/common/sshd.sh",
+      "packer/scripts/centos/ruby.sh",
+      "packer/scripts/centos/update.sh",
       "packer/scripts/centos/cleanup.sh",
       "packer/scripts/common/minimize.sh"
     ]
@@ -40,12 +43,12 @@
   "post-processors": [{
     "type": "vagrant",
     "compression_level": "{{user `compression_level`}}",
-    "output": "vagrant/boxes/centos-6.5-x86_64.box"
+    "output": "vagrant/boxes/centos-6.6-x86_64.box"
   }],
   "variables": {
     "compression_level": 6,
     "cpus": "1",
-    "disk_size": 40000,
+    "disk_size": 40960,
     "headless": false,
     "memory": "512",
     "mirror": "http://mirrors.kernel.org/centos"

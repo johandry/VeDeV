@@ -6,4 +6,5 @@ set -x
 sudo tee -a /etc/ssh/sshd_config <<EOF
 
 UseDNS no
+GSSAPIAuthentication no
 EOF

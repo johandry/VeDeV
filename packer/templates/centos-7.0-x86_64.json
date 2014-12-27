@@ -1,0 +1,54 @@
+{
+  "builders": [{
+    "type": "virtualbox-iso",
+    "guest_os_type": "RedHat_64",
+    "iso_url": "{{user `mirror`}}/7/isos/x86_64/CentOS-7.0-1406-x86_64-Minimal.iso",
+    "iso_checksum": "04e99a4f1a013b95a7ebc9a90ffa9ac64d28eb9872bc193fbd7c581ec9b6a360",
+    "iso_checksum_type": "sha256",
+    "output_directory": "output-centos-7.0-x86_64",
+    "vm_name": "packer-centos-7.0-x86_64",
+    "disk_size": "{{user `disk_size`}}",
+    "headless": "{{user `headless`}}",
+    "http_directory": "packer/http",
+    "boot_wait": "10s",
+    "boot_command": [
+      "<tab> text ks=http://{{ .HTTPIP }}:{{ .HTTPPort }}/centos-7.0/anaconda-ks.cfg<enter><wait>"
+    ],
+    "ssh_wait_timeout": "10000s",
+    "ssh_username": "vagrant",
+    "ssh_password": "vagrant",
+    "shutdown_command": "sudo poweroff",
+    "vboxmanage": [
+      ["modifyvm", "{{.Name}}", "--memory", "{{user `memory`}}"],
+      ["modifyvm", "{{.Name}}", "--cpus", "{{user `cpus`}}"]
+    ]
+  }],
+  "provisioners": [{
+    "type": "shell",
+    "scripts": [
+      "packer/scripts/centos/7.0/base.sh",
+      "packer/scripts/centos/virtualbox.sh",
+      "packer/scripts/common/vagrant.sh",
+      "packer/scripts/common/sshd.sh",
+      "packer/scripts/centos/ruby.sh",
+      "packer/scripts/centos/7.0/docker.sh",
+      "packer/scripts/centos/7.0/locale.sh",
+      "packer/scripts/centos/update.sh",
+      "packer/scripts/centos/cleanup.sh",
+      "packer/scripts/common/minimize.sh"
+    ]
+  }],
+  "post-processors": [{
+    "type": "vagrant",
+    "compression_level": "{{user `compression_level`}}",
+    "output": "vagrant/boxes/centos-7.0-x86_64.box"
+  }],
+  "variables": {
+    "compression_level": 6,
+    "cpus": "1",
+    "disk_size": 40960,
+    "headless": false,
+    "memory": "512",
+    "mirror": "http://ftp.iij.ad.jp/pub/linux/centos"
+  }
+}

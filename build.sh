@@ -6,7 +6,7 @@
 # Description: Wrapper script to build a vagrant box using packer and create the Vagrant environment.
 # Author: Johandry Amador (johandry@gmail.com)
 # Date: 12/01/2014
-# Usage: build.sh [-h|--help] distro
+# Usage help: build.sh [-h|--help]
 ################################################################################
 
 #===============================================================================
@@ -343,6 +343,10 @@ vagrant_build () {
 #===============================================================================
 # Main code
 #===============================================================================
+
+echo "This command is deprecated, instead use the vedev.rb command."
+echo "Type vedev.rb --help to know how to use it."
+exit 0
 
 process_opt "$@"  # Process the parameters
 

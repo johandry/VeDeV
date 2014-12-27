@@ -39,6 +39,8 @@
       "packer/scripts/ubuntu/virtualbox.sh",
       "packer/scripts/common/vagrant.sh",
       "packer/scripts/common/sshd.sh",
+      "packer/scripts/ubuntu/update.sh",
+      "packer/scripts/ubuntu/ruby.sh",
       "packer/scripts/ubuntu/cleanup.sh",
       "packer/scripts/common/minimize.sh"
     ]
@@ -51,7 +53,7 @@
   "variables": {
     "compression_level": 6,
     "cpus": "1",
-    "disk_size": 40000,
+    "disk_size": 40960,
     "headless": false,
     "memory": "1024",
     "mirror": "http://releases.ubuntu.com"
