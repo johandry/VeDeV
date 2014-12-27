@@ -46,10 +46,6 @@ TODO
 
 TODO
 
-## Packer Templates
-
-The only packer templates and provisionong scripts are for CentOS 6.5 and Ubuntu 14. They were obtained from https://github.com/kaorimatz/packer-templates but there are lot of packer templates in GitHub. These are the only OS I need now but more would be added.
-
 ## Usage
 
 Clone the repository:
@@ -58,21 +54,21 @@ Clone the repository:
 
 Build a machine image from the template in the repository:
 
-    $ ./build.sh ubuntu-14.1
+    $ ./vedev.rb build ubuntu-14.1
 
 To know the available packer templates to build run this:
 
-    $ ./build.sh -l
+    $ ./vedev.rb list
 
 When you finish, you may clean the packer box with:
 
-    $ ./build.sh -c box
+    $ ./vedev.rb clean box
 
 Or, you may delete the packer cache or the vagrant environment with the options 'cache' and 'vagrant'. Or clean it all with option 'all'.
 
 Check the build.sh help for more details.
 
-    $ ./build.sh -h
+    $ ./vedev.rb help
 
 When the build is ready you can login to the vagrant box with:
 
