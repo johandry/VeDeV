@@ -6,6 +6,13 @@ As Docker require a virtual machine manager in OS X and Windows, VeDeV use Vagra
 
 The initial provisioning of the box is done with shell scripts on Packer. Later you can provision the box with shell or Puppet on Vagrant. The project requirements can be provisioned with Docker.
 
+The only Linux distros available to create a box are: 
+* CentOS 6.6
+* CentOS 7.0
+* Ubuntu 14.04.1
+* Ubuntu 14.10
+These are the only I need, so far, but I can add more in the future. They are minimal boxes with **Docker** and **Ruby** installed.
+
 ## Requirements
 
 ### Mac OS X
