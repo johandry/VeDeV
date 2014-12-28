@@ -1,10 +1,10 @@
-# vedev: Virtual Environment for Development
+# VeDeV: Virtual Environment for Development
 
-This is a project in development, it is not ready yet.
+Create a Virtual Environment for Development for OS X and Windows. Uses [Packer](http://www.packer.io/) to create the Vagrant Box, [Vagrant](https://www.vagrantup.com/) to manage the virtual machine, [VirtualBox](https://www.virtualbox.org/) as the virtualization software, Scripts to provision the new box and [Docker](https://www.docker.com/) to build, ship and run the developed application.
 
-Create a Virtual Environment for Develoment for OS X and Windows. Uses [Packer](http://www.packer.io/) to create the Vagrant Box, [Vagrant](https://www.vagrantup.com/) to manage the virtual machine, [VirtualBox](https://www.virtualbox.org/) as the virtualization software, [Puppet](http://puppetlabs.com/) and Shell Scripts to provision the new box and [Docker](https://www.docker.com/) to build, ship and run the developed application.
+As Docker require a virtual machine manager in OS X and Windows, VeDeV use Vagrant for this purpose. Instead of use a pre-build and shared box, you can create your own with Packer using what ever OS you like with the same requirements for the developed application. In case you are using Linux then ignore Vagrant and VirtualBox, and use Docker directly. 
 
-As Docker require a virtual machine manager in OS X and Windows, vedev use Vagrant for this purpose. Instead of use a pre-build and shared box, you can create your own with Packer using what ever OS you like with the same requirements for the developed application. In case you are using Linux it is possible to skip Vagrant and VirtualBox to use Docker. The initial provisioning of the box is done with shell scripts and Puppet.
+The initial provisioning of the box is done with shell scripts on Packer. Later you can provision the box with shell or Puppet on Vagrant. The project requirements can be provisioned with Docker.
 
 ## Requirements
 
@@ -34,17 +34,13 @@ As Docker require a virtual machine manager in OS X and Windows, vedev use Vagra
 
     $ brew cask install vagrant-manager
 
-* [Docker](https://www.docker.com/): (Required) Used to build, ship and run the developed application.
-
-TODO
-
-* [Puppet](http://puppetlabs.com/): (Required) Used to provision the new vagrant box. Puppet and Shell scripts will do the initial and base provisioning.
-
-TODO
-
 ### Windows
 
 TODO
+
+### Linux
+
+VeDeV purpose is to be used in Mac OS X and Windows to build, ship and deploy the projects with Docker using a Linux box. If you are using Linux then use Docker directly or other such as Puppet, Chef or Salt.
 
 ## Usage
 
@@ -52,25 +48,37 @@ Clone the repository:
 
     $ git clone https://github.com/johandry/vedev && cd vedev
 
-Build a machine image from the template in the repository:
+List the available packer templates to build a box:
+
+    $ ./vedev.rb list
+
+Build a machine image from the template in the repository, there is no need to write the entire name of the distro:
 
     $ ./vedev.rb build ubuntu-14.1
 
-To know the available packer templates to build run this:
-
-    $ ./vedev.rb list
 
 When you finish, you may clean the packer box with:
 
     $ ./vedev.rb clean box
 
-Or, you may delete the packer cache or the vagrant environment with the options 'cache' and 'vagrant'. Or clean it all with option 'all'.
+Or, you may delete the packer cache or the vagrant environment with the options 'clean cache' and 'clean vagrant'. Or clean it all with 'clean all'.
 
-Check the build.sh help for more details.
+Check the VeDeV help for more details.
 
     $ ./vedev.rb help
 
 When the build is ready you can login to the vagrant box with:
 
-    $ cd vagrant/ubuntu-14.1* && vagrant ssh
+    $ cd vagrant/ubuntu-14.1* && vagrant up && vagrant ssh
 
+## TODO
+
+* Testing: Create a Rake file using ServerSpec to test.
+* Push to Atlas: Once the Vagrant box is ready upload it to Altas (previously VagrantCloud)
+* Add more options to vedev.rb such as start, stop, update, init. Improve clean and build options.
+
+## Thanks
+
+The creation of the packer templates, scripts and http templates are based on several github projects. This is a project I used to learn packer and I thanks to all the developers that publish their work. 
+
+In the same way, every body is free to use what I did to improve it or learn.
