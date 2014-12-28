@@ -11,6 +11,7 @@ The only Linux distros available to create a box are:
 * CentOS 7.0
 * Ubuntu 14.04.1
 * Ubuntu 14.10
+
 These are the only I need, so far, but I can add more in the future. They are minimal boxes with **Docker** and **Ruby** installed.
 
 ## Requirements
