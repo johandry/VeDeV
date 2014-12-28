@@ -19,29 +19,31 @@ These are the only I need, so far, but I can add more in the future. They are mi
 ### Mac OS X
 
 * [Homebrew](http://brew.sh/): (Optional) Used to install all Brew-Cask and this to install all the main requirements. If not used, Homebrew Cask is not required and the required software will be installed manually.
-
+    ```bash
     $ ruby -e "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/master/install)"
+    ```
 
 * [Homebrew Cask](http://caskroom.io/): (Optional) Used to install all the requirements. If not used, the required software will be installed manually.
-
+    ```bash
     $ brew install caskroom/cask/brew-cask
+    ```
 
 * [Packer](http://www.packer.io/): (Required) Used to create the vagrant box. Or, to create the Docker image if you are using Linux.
-
+    ```bash
     $ brew cask install packer
-
+    ```
 * [Vagrant](https://www.vagrantup.com/): (Required) Used to manage the virtual machine.
-
+    ```bash
     $ brew cask install vagrant
-
+    ```
 * [VirtualBox](https://www.virtualbox.org/): (Required) Virtualization software to run the virtual machine.
-
+    ```bash
     $ brew cask install virtualbox
-
+    ```
 * [Vagrant Manager](http://vagrantmanager.com/): (Optional) GUI for Vagrant. It is optional but would be nice to have it.
-
+    ```bash
     $ brew cask install vagrant-manager
-
+    ```
 ### Windows
 
 _TODO_
