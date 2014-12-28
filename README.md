@@ -36,7 +36,7 @@ The initial provisioning of the box is done with shell scripts on Packer. Later 
 
 ### Windows
 
-TODO
+_TODO_
 
 ### Linux
 
@@ -73,9 +73,9 @@ When the build is ready you can login to the vagrant box with:
 
 ## TODO
 
-* Testing: Create a Rake file using ServerSpec to test.
-* Push to Atlas: Once the Vagrant box is ready upload it to Altas (previously VagrantCloud)
-* Add more options to vedev.rb such as start, stop, update, init. Improve clean and build options.
+- [ ] **Testing**: Create a Rake file using ServerSpec to test.
+- [ ] **Push to Atlas**: Once the Vagrant box is ready upload it to Altas (previously VagrantCloud)
+- [ ] **Options**: Add more options to vedev.rb such as start, stop, update, init. Improve clean and build options.
 
 ## Thanks
 
