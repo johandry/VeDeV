@@ -1,18 +1,26 @@
-#!/bin/bash
+#!/bin/bash -eux
 
-set -e
-set -x
+# Print script message in yellow
+message () { 
+  echo -e "\033[93;1mSCRIPT:\033[0m ${1}" 
+}
 
-sudo yum -y install bzip2
-sudo yum -y --enablerepo=epel install dkms
-sudo yum -y install kernel-devel
-sudo yum -y install make
-sudo yum -y install perl
+if [[ $PACKER_BUILDER_TYPE =~ virtualbox ]]; then
+  message "Installing VirtualBox guest additions"
+  # Assume that we've installed all the prerequisites:
+  # kernel-headers-$(uname -r) kernel-devel-$(uname -r) gcc make perl
+  # from the install media via ks.cfg
+  #
+  # If not:
+  # yum -y --enablerepo=epel install dkms
+  # yum -y install bzip2 kernel-devel make perl
+  #
+  # If you want to install Guest Additions with support for X
+  # yum -y install xorg-x11-server-Xorg
+  # And remove --nox11 parameter below
 
-# Uncomment this if you want to install Guest Additions with support for X
-#sudo yum -y install xorg-x11-server-Xorg
-
-sudo mount -o loop,ro ~/VBoxGuestAdditions.iso /mnt/
-sudo /mnt/VBoxLinuxAdditions.run || :
-sudo umount /mnt/
-rm -f ~/VBoxGuestAdditions.iso
+  sudo mount -o loop,ro /home/vagrant/VBoxGuestAdditions.iso /mnt/
+  sudo /mnt/VBoxLinuxAdditions.run --nox11 || :
+  sudo umount /mnt/
+  rm -f /home/vagrant/VBoxGuestAdditions.iso
+fi

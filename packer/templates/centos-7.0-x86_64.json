@@ -1,18 +1,28 @@
 {
+  "variables": {
+    "compression_level": 6,
+    "cpus": "1",
+    "disk_size": 40960,
+    "headless": false,
+    "memory": "512",
+    "iso_url": "http://mirrors.sonic.net/centos/7.0.1406/isos/x86_64/CentOS-7.0-1406-x86_64-DVD.iso",
+    "iso_checksum_sha1": "154ba47b7a37e52e0100310c3aeb8f9d9daf4806",
+    "distro_name": "centos-7.0-x86_64"
+  },
   "builders": [{
     "type": "virtualbox-iso",
     "guest_os_type": "RedHat_64",
-    "iso_url": "{{user `mirror`}}/7/isos/x86_64/CentOS-7.0-1406-x86_64-Minimal.iso",
-    "iso_checksum": "04e99a4f1a013b95a7ebc9a90ffa9ac64d28eb9872bc193fbd7c581ec9b6a360",
-    "iso_checksum_type": "sha256",
-    "output_directory": "output-centos-7.0-x86_64",
-    "vm_name": "packer-centos-7.0-x86_64",
+    "iso_url": "{{ user `iso_url` }}",
+    "iso_checksum": "{{ user `iso_checksum_sha1` }}",
+    "iso_checksum_type": "sha1",
+    "output_directory": "output-{{user `distro_name`}}",
+    "vm_name": "packer-{{user `distro_name`}}",
     "disk_size": "{{user `disk_size`}}",
     "headless": "{{user `headless`}}",
     "http_directory": "packer/http",
     "boot_wait": "10s",
     "boot_command": [
-      "<tab> text ks=http://{{ .HTTPIP }}:{{ .HTTPPort }}/centos-7.0/anaconda-ks.cfg<enter><wait>"
+      "<tab> text ks=http://{{ .HTTPIP }}:{{ .HTTPPort}}/centos/ks-7.0.cfg<enter>"
     ],
     "ssh_wait_timeout": "10000s",
     "ssh_username": "vagrant",
@@ -25,14 +35,16 @@
   }],
   "provisioners": [{
     "type": "shell",
+    "execute_command": "echo 'vagrant' | {{.Vars}} sudo -E -S bash '{{.Path}}'",
     "scripts": [
-      "packer/scripts/centos/7.0/base.sh",
-      "packer/scripts/centos/virtualbox.sh",
-      "packer/scripts/common/vagrant.sh",
+      "packer/scripts/centos/fix_slow_dns.sh",
       "packer/scripts/common/sshd.sh",
+      "packer/scripts/common/vagrant.sh",
+      "packer/scripts/centos/virtualbox.sh",
+      "packer/scripts/centos/base.sh",
+      "packer/scripts/centos/repos.sh",
       "packer/scripts/centos/ruby.sh",
-      "packer/scripts/centos/7.0/docker.sh",
-      "packer/scripts/centos/7.0/locale.sh",
+      "packer/scripts/centos/docker.sh",
       "packer/scripts/centos/update.sh",
       "packer/scripts/centos/cleanup.sh",
       "packer/scripts/common/minimize.sh"
@@ -41,14 +53,6 @@
   "post-processors": [{
     "type": "vagrant",
     "compression_level": "{{user `compression_level`}}",
-    "output": "vagrant/boxes/centos-7.0-x86_64.box"
-  }],
-  "variables": {
-    "compression_level": 6,
-    "cpus": "1",
-    "disk_size": 40960,
-    "headless": false,
-    "memory": "512",
-    "mirror": "http://ftp.iij.ad.jp/pub/linux/centos"
-  }
+    "output": "vagrant/boxes/{{user `distro_name`}}.box"
+  }]
 }

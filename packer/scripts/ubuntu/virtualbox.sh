@@ -1,21 +1,24 @@
-#!/bin/bash
+#!/bin/bash -eux
 
-set -e
-set -x
+# Print script message in yellow
+message () { 
+  echo -e "\033[93;1mSCRIPT:\033[0m ${1}" 
+}
 
-sudo aptitude -y install dkms
-sudo aptitude -y install make
+message "Installing VirtualBox guest additions"
+aptitude -y install dkms
+aptitude -y install make
 
 # Uncomment this if you want to install Guest Additions with support for X
-#sudo aptitude -y install xserver-xorg
+# aptitude -y install xserver-xorg
 
-sudo mount -o loop,ro ~/VBoxGuestAdditions.iso /mnt/
-sudo /mnt/VBoxLinuxAdditions.run || :
-sudo umount /mnt/
+mount -o loop,ro ~/VBoxGuestAdditions.iso /mnt/
+/mnt/VBoxLinuxAdditions.run || :
+umount /mnt/
 rm -f ~/VBoxGuestAdditions.iso
 
 VBOX_VERSION=$(cat ~/.vbox_version)
 if [ "$VBOX_VERSION" == '4.3.10' ]; then
   # https://www.virtualbox.org/ticket/12879
-  sudo ln -s "/opt/VBoxGuestAdditions-$VBOX_VERSION/lib/VBoxGuestAdditions" /usr/lib/VBoxGuestAdditions
+  fln -s "/opt/VBoxGuestAdditions-$VBOX_VERSION/lib/VBoxGuestAdditions" /usr/lib/VBoxGuestAdditions
 fi

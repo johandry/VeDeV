@@ -1,6 +1,9 @@
-#!/bin/bash
+#!/bin/bash -eux
 
-set -e
-set -x
+# Print script message in yellow
+message () { 
+  echo -e "\033[93;1mSCRIPT:\033[0m ${1}" 
+}
 
-sudo aptitude -y install docker.io
+message "Installing docker"
+aptitude -y install docker.io

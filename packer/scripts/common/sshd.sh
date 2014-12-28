@@ -1,10 +1,14 @@
-#!/bin/sh
+#!/bin/bash -eux
 
-set -e
-set -x
+# Print script message in yellow
+message () { 
+  echo -e "\033[93;1mSCRIPT:\033[0m ${1}" 
+}
 
-sudo tee -a /etc/ssh/sshd_config <<EOF
+message "Configuring sshd_config options"
 
-UseDNS no
-GSSAPIAuthentication no
-EOF
+message "Turning off sshd DNS lookup to prevent timeout delay"
+echo "UseDNS no" >> /etc/ssh/sshd_config
+
+message "Disablng GSSAPI authentication to prevent timeout delay"
+echo "GSSAPIAuthentication no" >> /etc/ssh/sshd_config

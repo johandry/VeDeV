@@ -1,21 +1,28 @@
 {
+  "variables": {
+    "compression_level": 6,
+    "cpus": "1",
+    "disk_size": 40960,
+    "headless": false,
+    "memory": 512,
+    "iso_url": "http://mirrors.kernel.org/centos/6.6/isos/x86_64/CentOS-6.6-x86_64-bin-DVD1.iso",
+    "iso_checksum_sha1": "08be09fd7276822bd3468af8f96198279ffc41f0",
+    "distro_name": "centos-6.6-x86_64"
+  },
   "builders": [{
     "type": "virtualbox-iso",
     "guest_os_type": "RedHat_64",
-    "iso_url": "{{user `mirror`}}/6.6/isos/x86_64/CentOS-6.6-x86_64-bin-DVD1.iso",
-    "iso_checksum": "08be09fd7276822bd3468af8f96198279ffc41f0",
+    "iso_url": "{{user `iso_url`}}",
+    "iso_checksum": "{{user `iso_checksum_sha1`}}",
     "iso_checksum_type": "sha1",
-    "output_directory": "output-centos-6.6-x86_64",
-    "vm_name": "packer-centos-6.5-x86_64",
+    "output_directory": "output-{{user `distro_name`}}",
+    "vm_name": "packer-{{user `distro_name`}}",
     "disk_size": "{{user `disk_size`}}",
     "headless": "{{user `headless`}}",
     "http_directory": "packer/http",
     "boot_wait": "10s",
     "boot_command": [
-      "<esc>",
-      "<wait>",
-      "linux ks=http://{{.HTTPIP}}:{{.HTTPPort}}/centos-6.6/anaconda-ks.cfg",
-      "<enter>"
+      "<tab> text ks=http://{{ .HTTPIP }}:{{ .HTTPPort}}/centos/ks-6.6.cfg<enter>"
     ],
     "ssh_wait_timeout": "10000s",
     "ssh_username": "vagrant",
@@ -28,13 +35,16 @@
   }],
   "provisioners": [{
     "type": "shell",
+    "execute_command": "echo 'vagrant' | {{.Vars}} sudo -E -S bash '{{.Path}}'",
     "scripts": [
-      "packer/scripts/centos/6.6/repos.sh",
-      "packer/scripts/centos/6.6/base.sh",
-      "packer/scripts/centos/virtualbox.sh",
-      "packer/scripts/common/vagrant.sh",
+      "packer/scripts/centos/fix_slow_dns.sh",
       "packer/scripts/common/sshd.sh",
+      "packer/scripts/common/vagrant.sh",
+      "packer/scripts/centos/virtualbox.sh",
+      "packer/scripts/centos/base.sh",
+      "packer/scripts/centos/repos.sh",
       "packer/scripts/centos/ruby.sh",
+      "packer/scripts/centos/docker.sh",
       "packer/scripts/centos/update.sh",
       "packer/scripts/centos/cleanup.sh",
       "packer/scripts/common/minimize.sh"
@@ -43,14 +53,6 @@
   "post-processors": [{
     "type": "vagrant",
     "compression_level": "{{user `compression_level`}}",
-    "output": "vagrant/boxes/centos-6.6-x86_64.box"
-  }],
-  "variables": {
-    "compression_level": 6,
-    "cpus": "1",
-    "disk_size": 40960,
-    "headless": false,
-    "memory": "512",
-    "mirror": "http://mirrors.kernel.org/centos"
-  }
+    "output": "vagrant/boxes/{{user `distro_name`}}.box"
+  }]
 }

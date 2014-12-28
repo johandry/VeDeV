@@ -1,9 +1,12 @@
-#!/bin/bash
+#!/bin/bash -eux
 
-set -e
-set -x
+# Print script message in yellow
+message () { 
+  echo -e "\033[93;1mSCRIPT:\033[0m ${1}" 
+}
 
-sudo sed -i -e 's,^\(ACTIVE_CONSOLES="/dev/tty\).*,\11",' /etc/default/console-setup
+message "Setting one active console"
+sed -i -e 's,^\(ACTIVE_CONSOLES="/dev/tty\).*,\11",' /etc/default/console-setup
 for f in /etc/init/tty[^1]*.conf; do
-  sudo mv "$f"{,.bak}
+  mv "$f"{,.bak}
 done
