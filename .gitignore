@@ -12,3 +12,5 @@ packer_cache
 Trash
 
 .Gemfile.lock
+
+output-*

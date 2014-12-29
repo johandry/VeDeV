@@ -64,16 +64,15 @@ Clone the repository:
 
 List the available packer templates to build a box:
 
-    $ ./vedev.rb list
+    $ ./vedev.rb list build
 
 Build a machine image from the template in the repository, there is no need to write the entire name of the distro:
 
     $ ./vedev.rb build ubuntu-14.1
 
-
 When you finish, you may clean the packer box with:
 
-    $ ./vedev.rb clean box
+    $ ./vedev.rb clean box ubuntu-14.1
 
 Or, you may delete the packer cache or the vagrant environment with the options 'clean cache' and 'clean vagrant'. Or clean it all with 'clean all'.
 
@@ -89,7 +88,8 @@ When the build is ready you can login to the vagrant box with:
 
 - [ ] **Testing**: Create a Rake file using ServerSpec to test.
 - [ ] **Push to Atlas**: Once the Vagrant box is ready upload it to Altas (previously VagrantCloud)
-- [ ] **Options**: Add more options to vedev.rb such as start, stop, update, init. Improve clean and build options.
+- [X] **Options**: Add more options to vedev.rb such as update, init; and improve clean and build options.
+- [ ] **More Options**: Add more options to vedev.rb such as up and down, to vagrant up && ssh and vagrant halt.
 
 ## Thanks
 

@@ -1,0 +1,7 @@
+{
+  "compression_level": "6",
+  "cpus": "1",
+  "disk_size": "40960",
+  "headless": "false",
+  "memory": "512"
+}
