@@ -52,15 +52,9 @@
       "packer/scripts/common/minimize.sh"
     ]
   }],
-  "post-processors": [
-  {
+  "post-processors": [{
     "type": "vagrant",
     "compression_level": "{{user `compression_level`}}",
     "output": "vagrant/boxes/{{user `distro_name`}}.box"
-  },
-  {
-    "type": "atlas",
-    "artifact": "johandry/centos-6.6-x86_64",
-    "artifact_type":  
   }]
 }

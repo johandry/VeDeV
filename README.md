@@ -84,7 +84,7 @@ When the build is ready you can login to the vagrant box with:
 
     $ cd vagrant/ubuntu-14.1* && vagrant up && vagrant ssh
 
-## TODO
+## Tasks
 
 - [ ] **Testing**: Create a Rake file using ServerSpec to test.
 - [ ] **Push to Atlas**: Once the Vagrant box is ready upload it to Altas (previously VagrantCloud)

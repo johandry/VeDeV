@@ -9,6 +9,9 @@
 ################################################################################
 
 require 'thor'
+require 'json'
+require 'pathname'
+require 'net/http'
 
 module VeDeV
   def error(message)
@@ -72,9 +75,9 @@ module VeDeV
       date = Time.now.strftime("%Y%m%d")
       FileUtils.mkdir_p Dir.pwd + "/Trash/#{date}"
 
-      box( distro )
-      # cache() 
-      vagrant( distro )
+      box distro
+      cache
+      vagrant distro 
     end
 
     desc "box [DISTRO]", "Clean (moving to a Trash directory) the builded box of a DISTRO or from ALL the distros. Distro could be 'all' or any of the distros listed with option 'list'."
@@ -102,7 +105,7 @@ module VeDeV
           box_count = Dir.glob(Dir.pwd + '/vagrant/boxes/*.box').length
           warning "Moving #{box_count} boxes to Trash/#{date}/boxes"
           FileUtils.mkdir_p Dir.pwd + "/Trash/#{date}/boxes"
-          FileUtils.mv Dir.pwd + '/vagrant/boxes/*.box', Dir.pwd + "/Trash/#{date}/boxes", :force => true
+          FileUtils.mv Dir.glob(Dir.pwd + '/vagrant/boxes/*.box'), Dir.pwd + "/Trash/#{date}/boxes", :force => true
         end
       end
     end
@@ -219,6 +222,10 @@ module VeDeV
         distros.each do |distro|
           info "Building distro #{distro}"
           build_status = paker_build distro
+          # if build_status
+          #   info "Pushing distro box to Atlas"
+          #   packer_push distro
+          # end
           if ! options[:only_box] && build_status
             info "Initializing distro #{distro}"
             vagrant_init distro 
@@ -228,6 +235,10 @@ module VeDeV
         distro = check_distro(distro)
         if distro 
           build_status = paker_build distro
+          # if build_status
+          #   info "Pushing distro box to Atlas"
+          #   packer_push distro
+          # end
           if ! options[:only_box] && build_status
             info "Initializing distro #{distro}"
             vagrant_init distro 
@@ -261,6 +272,29 @@ module VeDeV
       end
     end
 
+    desc "validate [DISTRO]", "Validate the packer template for a DISTRO or all of them."
+    def validate(distro='all')
+      status = true
+      if distro.upcase == "all".upcase
+        distros = get_distros('')
+        distros.each do |distro|
+          status = packer_validate distro
+          status = packer_check_iso distro
+        end
+      else
+        distro = check_distro(distro)
+        if distro
+          status = packer_validate distro
+          pstatus = acker_check_iso distro
+        end
+      end
+      if status
+        info "All test were successfull"
+      else
+        error "Some test failed"
+      end
+    end
+
     desc "list SUBCOMMAND ...ARGS", "List available distros to build or boxes to initialize"
     subcommand "list", List
 
@@ -282,6 +316,43 @@ module VeDeV
           end
         end
         status
+      end
+
+      def packer_validate(distro)
+        info "Validating distro #{distro}"
+        if system "packer validate -var-file=" + Dir.pwd + "/packer/vars/global_variables.json " + Dir.pwd + "/packer/templates/#{distro}.json"
+          info "Template for distro #{distro} is valid"
+        else
+          error "Template for #{distro} is not valid"
+        end
+      end
+
+      def packer_check_iso(distro)
+        info "Checking if the ISO URL exists"
+        template = Pathname.new(Dir.pwd + "/packer/templates/#{distro}.json")
+        json = JSON.parse(template.read)
+        iso_url = json['variables']['iso_url']
+        url_exist iso_url
+      end
+
+      def url_exist(url_string)
+        url = URI.parse(url_string)
+        req = Net::HTTP.new(url.host, url.port)
+        req.use_ssl = (url.scheme == 'https')
+        path = url.path.empty? ? '/' : url.path
+        res = req.request_head(path)
+        if not (res.is_a?(Net::HTTPSuccess) || res.is_a?(Net::HTTPRedirection))
+          error "URL #{url_string} does not exists"
+          return
+        end
+        if res['content-type'].include? 'text/html'
+          error "Content of URL #{url_string} is not an ISO file"
+        else
+          info "URL #{url_string} exists and it is a ISO"
+        end
+      rescue Errno::ENOENT
+        error "Cannot find the server for #{url_string}"
+        false # false if can't find the server
       end
 
       def vagrant_init(distro)
