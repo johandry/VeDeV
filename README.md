@@ -1,5 +1,8 @@
 # VeDeV: Virtual Environment for Development
 
+[![Build Status](http://img.shields.io/travis/ffuenf/vagrant-boxes.svg)][travis]
+[travis]: https://travis-ci.org/ffuenf/vagrant-boxes
+
 Create a Virtual Environment for Development for OS X and Windows. Uses [Packer](http://www.packer.io/) to create the Vagrant Box, [Vagrant](https://www.vagrantup.com/) to manage the virtual machine, [VirtualBox](https://www.virtualbox.org/) as the virtualization software, Scripts to provision the new box and [Docker](https://www.docker.com/) to build, ship and run the developed application.
 
 As Docker require a virtual machine manager in OS X and Windows, VeDeV use Vagrant for this purpose. Instead of use a pre-build and shared box, you can create your own with Packer using what ever OS you like with the same requirements for the developed application. In case you are using Linux then ignore Vagrant and VirtualBox, and use Docker directly. 
