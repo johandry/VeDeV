@@ -83,14 +83,20 @@ Check the VeDeV help for more details.
 
     $ ./vedev.rb help
 
-When the build is ready you can login to the vagrant box with:
+When the build is ready you can test it with:
+
+    $ ./vedev.rb test ubuntu-14.1
+
+If the test is success you can login to the vagrant box with:
 
     $ cd vagrant/ubuntu-14.1* && vagrant up && vagrant ssh
 
+Then the environment is ready to use it for your development environment, provision it (using Docker or Puppet) and add more tests with ServerSPEC.
+
 ## Tasks
 
-- [ ] **Testing**: Create a Rake file using ServerSpec to test.
-- [ ] **Push to Atlas**: Once the Vagrant box is ready upload it to Altas (previously VagrantCloud)
+- [X] **Testing**: Create a Rake file using ServerSpec to test.
+- [ ] **Push to Atlas**: Once the Vagrant box is ready upload it to Altas (previously VagrantCloud). This is not possible yet. Waiting for Atlas to provide (free) packer push of vagrant-virtualbox boxes.
 - [X] **Options**: Add more options to vedev.rb such as update, init; and improve clean and build options.
 - [ ] **More Options**: Add more options to vedev.rb such as up and down, to vagrant up && ssh and vagrant halt.
 

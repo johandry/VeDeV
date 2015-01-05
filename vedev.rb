@@ -279,14 +279,19 @@ module VeDeV
       if distro.upcase == "all".upcase
         distros = get_distros('')
         distros.each do |distro|
-          status = packer_validate distro
-          status = packer_check_iso distro
+          stat = packer_validate distro
+          # When 'stat' is false, so 'status' will be. Then 'status' will not change to true again.
+          status = status && stat
+          stat = packer_check_iso distro
+          status = status && stat
         end
       else
         distro = check_distro(distro)
         if distro
-          status = packer_validate distro
-          pstatus = acker_check_iso distro
+          stat = packer_validate distro
+          status = status && stat
+          stat = packer_check_iso distro
+          status = status && stat
         end
       end
       if status
@@ -294,6 +299,30 @@ module VeDeV
       else
         error "Some test failed"
       end
+      status
+    end
+
+    desc "test [DISTRO]", "Test the vagrant boxes builded for a DISTRO or all of them."
+    def test(distro='all')
+      status = true
+      if distro.upcase == "all".upcase
+        Dir.glob(Dir.pwd + "/vagrant/*")
+        distros = get_distros('')
+        distros.each do |distro|
+          info "Testing distro #{distro}"
+          stat = vagrant_validate distro
+          status = status && stat
+        end
+      else
+        distro = check_distro(distro)
+        if distro
+          info "Testing distro #{distro}"
+          status = vagrant_validate distro
+        else
+          status = false
+        end
+      end
+      status
     end
 
     desc "list SUBCOMMAND ...ARGS", "List available distros to build or boxes to initialize"
@@ -358,27 +387,70 @@ module VeDeV
 
       def vagrant_init(distro)
         status = nil
+        hostname = distro.tr('.','-')
+        # Add the box to vagrant
         if Dir.glob(Dir.pwd + "/vagrant/boxes/#{distro}.box").empty?
           error "There is no vagrant box for #{distro}. Build it before initialize it."
-        elsif ! Dir.glob(Dir.pwd + "/vagrant/#{distro}").empty?
+        elsif ! Dir.glob(Dir.pwd + "/vagrant/#{distro}/Vagrantfile").empty?
           error "There may be a vagrant environment for #{distro}. Clean it before initialize it."
         else
           info "Creating vagrant environment for distro #{distro}"
           status = system "vagrant box add 'vagrant-#{distro}' '" + Dir.pwd + "/vagrant/boxes/#{distro}.box'"
           if status
+            # Initialize the vagrant machine
             FileUtils.mkdir_p Dir.pwd + "/vagrant/#{distro}"
             Dir.chdir Dir.pwd + "/vagrant/#{distro}" do
-              status = system "vagrant init 'vagrant-#{distro}'"
+              status = system "vagrant init --minimal --force 'vagrant-#{distro}'"
+              # Overwrite the Vagrantfile file
+              File.open('Vagrantfile', 'w') { |vfile|
+                vfile.write("Vagrant.configure(2) do |config|\n")
+                vfile.write("  config.vm.box = \"vagrant-#{distro}\"\n")
+                vfile.write("  # Define the vagrant machine name. Display it with: 'vagrant status'\n")
+                vfile.write("  config.vm.define \"vagrant-#{hostname}\"\n")
+                vfile.write("  # Define the hostname. Could be the project name.\n");
+                vfile.write("  config.vm.hostname = \"vagrant-#{hostname}\"\n")
+                vfile.write("  # Define ports to forward and folders to sync\n")
+                vfile.write("  # config.vm.network \"forwarded_port\", guest: 80, host: 8080\n")
+                vfile.write("  # config.vm.synced_folder \"../data\", \"/vagrant_data\"\n")
+                vfile.write("end")
+              }
             end
             if status 
-              info "Vagrant environment for distro #{distro} is done. Now you can start it with 'vagrant up'" 
+              info "Vagrant environment for distro #{distro} is done. Now you can start it with 'vagrant up \"vagrant-#{distro}\'" 
             else 
               error "Vagrant environment for distro #{distro} could not be initialized."
             end
+            # Create the ServerSPEC files
+            info "Setting up the ServerSPEC tests"
+            FileUtils.cp Dir.pwd + "/vagrant/boxes/serverspec/Rakefile", Dir.pwd + "/vagrant/#{distro}/"
+            FileUtils.cp Dir.pwd + "/vagrant/boxes/serverspec/.rspec",   Dir.pwd + "/vagrant/#{distro}/"
+            FileUtils.mkdir_p Dir.pwd + "/vagrant/#{distro}/spec"
+            FileUtils.cp Dir.pwd + "/vagrant/boxes/serverspec/spec/spec_helper.rb", Dir.pwd + "/vagrant/#{distro}/spec/"
+            FileUtils.cp Dir.pwd + "/vagrant/boxes/serverspec/spec/base_spec.rb",   Dir.pwd + "/vagrant/#{distro}/spec/"
           else
             error "Vagrant box for distro #{distro} could not be added"
           end
         end 
+        status
+      end
+
+      def vagrant_validate(distro)
+        status = true
+        # If there is a distro box and a Vagrantfile, then the machine should be ready
+        if  ! Dir.glob(Dir.pwd + "/vagrant/boxes/#{distro}.box").empty? && 
+            ! Dir.glob(Dir.pwd + "/vagrant/#{distro}/Vagrantfile").empty? &&
+            ! Dir.glob(Dir.pwd + "/vagrant/#{distro}/Rakefile").empty?
+          Dir.chdir Dir.pwd + "/vagrant/#{distro}" do
+            status = system "rake"
+          end
+          if status
+            info "Distro #{distro} vagrant environment is correct."
+          else
+            error "Distro #{distro} vagrant environment is failing."
+          end
+        else
+          warning "Distro #{distro} vagrant environment do not exists. Build it or Initialize it first"
+        end
         status
       end
   end

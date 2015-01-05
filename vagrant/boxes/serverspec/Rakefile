@@ -1,0 +1,17 @@
+require 'rake'
+require 'rspec/core/rake_task'
+
+vagrant_box = "vagrant-" + File.basename(Dir.pwd).tr!('.','-')
+
+task :spec    => "spec:#{vagrant_box}"
+task :default => :spec
+
+namespace :spec do
+  task :default => vagrant_box.to_sym
+
+  desc "Run serverspec tests to #{vagrant_box}"
+  RSpec::Core::RakeTask.new(vagrant_box.to_sym) do |t|
+    ENV['VAGRANT_BOX'] = vagrant_box
+    t.pattern = "spec/*_spec.rb"
+  end
+end
