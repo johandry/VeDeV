@@ -8,7 +8,7 @@ message () {
 message "Adding EPEL repo"
 cat /etc/redhat-release
 if grep -q -i "release 7" /etc/redhat-release ; then
-    wget http://dl.fedoraproject.org/pub/epel/7/x86_64/e/epel-release-7-2.noarch.rpm
+    wget http://dl.fedoraproject.org/pub/epel/7/x86_64/e/epel-release-7-5.noarch.rpm
     rpm -Uvh epel-release-7*.rpm
     rm -f epel-release-7*.rpm
     # yum -y install http://dl.fedoraproject.org/pub/epel/7/x86_64/e/epel-release-7-2.noarch.rpm

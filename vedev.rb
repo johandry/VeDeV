@@ -139,15 +139,15 @@ module VeDeV
 
       if File.directory?(Dir.pwd + '/vagrant')
         if distro.upcase != "all".upcase
-          if Dir.glob(Dir.pwd + "/vagrant/#{distro}").empty?
+          if Dir.glob(Dir.pwd + "/build/#{distro}").empty?
             info "No vagrant box for #{distro}"
           else
             count = 1
-            status = clean_vagrant_box(Dir.pwd + "/vagrant/#{distro}", date)
+            status = clean_vagrant_box(Dir.pwd + "/build/#{distro}", date)
             cound = 0 if not status
           end
         else
-          vagrant_boxes_dir = Dir[File.join(Dir.pwd + '/vagrant/', '*')].select { |file| File.directory?(file) && file !~ /\/vagrant\/boxes$/ }
+          vagrant_boxes_dir = Dir[File.join(Dir.pwd + '/build/', '*')].select { |file| File.directory?(file) && file !~ /\/vagrant\/boxes$/ }
           count = vagrant_boxes_dir.length
           vagrant_boxes_dir.each do |box|
             status = clean_vagrant_box(box, date)
@@ -250,19 +250,45 @@ module VeDeV
 
     desc "init [DISTRO]", "Initialize a vagrant environment using a DISTRO"
     def init(distro='all')
+      status = true
       if distro.upcase == "all".upcase
+        startTime = Time.now
         distros = get_distros('')
         distros.each do |distro|
           info "Initializing distro #{distro}"
-          vagrant_init distro
+          startT = Time.now
+          stat = vagrant_init distro
+          lapT   = Time.now - startT
+          if stat 
+            info "Distro #{distro} initialized in #{lapT} seconds."
+            stat = vagrant_validate distro
+          else
+            error "Distro #{distro} failed to initialize."
+          end
+          status = status && stat
+        end
+        lapT   = Time.now - startTime
+        if status
+          info "All distros where successfully initialized in #{lapT} seconds."
+        else
+          error "Some distro failed to initialize or are not correct. The entire process was done in #{lapT} seconds."
         end
       else
         distro = check_distro(distro)
         if distro
           info "Initializing distro #{distro}"
-          vagrant_init distro
+          startT = Time.now
+          status = vagrant_init distro
+          lapT   = Time.now - startT
+          if status 
+            info "Distro #{distro} initialized in #{lapT} seconds."
+            status = vagrant_validate distro
+          else
+            error "Distro #{distro} failed to initialize."
+          end
         end
       end
+      status
     end
 
     desc "update [DISTRO]", "Clean up all to build and init the DISTRO or all the distros."
@@ -306,7 +332,6 @@ module VeDeV
     def test(distro='all')
       status = true
       if distro.upcase == "all".upcase
-        Dir.glob(Dir.pwd + "/vagrant/*")
         distros = get_distros('')
         distros.each do |distro|
           info "Testing distro #{distro}"
@@ -386,20 +411,20 @@ module VeDeV
       end
 
       def vagrant_init(distro)
-        status = nil
-        hostname = distro.tr('.','-')
+        status = false
+        hostname = distro.tr('._','-')
         # Add the box to vagrant
         if Dir.glob(Dir.pwd + "/vagrant/boxes/#{distro}.box").empty?
           error "There is no vagrant box for #{distro}. Build it before initialize it."
-        elsif ! Dir.glob(Dir.pwd + "/vagrant/#{distro}/Vagrantfile").empty?
+        elsif ! Dir.glob(Dir.pwd + "/build/#{distro}/Vagrantfile").empty?
           error "There may be a vagrant environment for #{distro}. Clean it before initialize it."
         else
           info "Creating vagrant environment for distro #{distro}"
           status = system "vagrant box add 'vagrant-#{distro}' '" + Dir.pwd + "/vagrant/boxes/#{distro}.box'"
           if status
             # Initialize the vagrant machine
-            FileUtils.mkdir_p Dir.pwd + "/vagrant/#{distro}"
-            Dir.chdir Dir.pwd + "/vagrant/#{distro}" do
+            FileUtils.mkdir_p Dir.pwd + "/build/#{distro}"
+            Dir.chdir Dir.pwd + "/build/#{distro}" do
               status = system "vagrant init --minimal --force 'vagrant-#{distro}'"
               # Overwrite the Vagrantfile file
               File.open('Vagrantfile', 'w') { |vfile|
@@ -422,11 +447,11 @@ module VeDeV
             end
             # Create the ServerSPEC files
             info "Setting up the ServerSPEC tests"
-            FileUtils.cp Dir.pwd + "/vagrant/boxes/serverspec/Rakefile", Dir.pwd + "/vagrant/#{distro}/"
-            FileUtils.cp Dir.pwd + "/vagrant/boxes/serverspec/.rspec",   Dir.pwd + "/vagrant/#{distro}/"
-            FileUtils.mkdir_p Dir.pwd + "/vagrant/#{distro}/spec"
-            FileUtils.cp Dir.pwd + "/vagrant/boxes/serverspec/spec/spec_helper.rb", Dir.pwd + "/vagrant/#{distro}/spec/"
-            FileUtils.cp Dir.pwd + "/vagrant/boxes/serverspec/spec/base_spec.rb",   Dir.pwd + "/vagrant/#{distro}/spec/"
+            FileUtils.cp Dir.pwd + "/vagrant/serverspec/Rakefile", Dir.pwd + "/build/#{distro}/"
+            FileUtils.cp Dir.pwd + "/vagrant/serverspec/.rspec",   Dir.pwd + "/build/#{distro}/"
+            FileUtils.mkdir_p Dir.pwd + "/build/#{distro}/spec"
+            FileUtils.cp Dir.pwd + "/vagrant/serverspec/spec/spec_helper.rb", Dir.pwd + "/build/#{distro}/spec/"
+            FileUtils.cp Dir.pwd + "/vagrant/serverspec/spec/base_spec.rb",   Dir.pwd + "/build/#{distro}/spec/"
           else
             error "Vagrant box for distro #{distro} could not be added"
           end
@@ -438,9 +463,9 @@ module VeDeV
         status = true
         # If there is a distro box and a Vagrantfile, then the machine should be ready
         if  ! Dir.glob(Dir.pwd + "/vagrant/boxes/#{distro}.box").empty? && 
-            ! Dir.glob(Dir.pwd + "/vagrant/#{distro}/Vagrantfile").empty? &&
-            ! Dir.glob(Dir.pwd + "/vagrant/#{distro}/Rakefile").empty?
-          Dir.chdir Dir.pwd + "/vagrant/#{distro}" do
+            ! Dir.glob(Dir.pwd + "/build/#{distro}/Vagrantfile").empty? &&
+            ! Dir.glob(Dir.pwd + "/build/#{distro}/Rakefile").empty?
+          Dir.chdir Dir.pwd + "/build/#{distro}" do
             status = system "rake"
           end
           if status

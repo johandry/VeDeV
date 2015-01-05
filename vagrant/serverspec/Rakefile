@@ -1,7 +1,7 @@
 require 'rake'
 require 'rspec/core/rake_task'
 
-vagrant_box = "vagrant-" + File.basename(Dir.pwd).tr!('.','-')
+vagrant_box = "vagrant-" + File.basename(Dir.pwd).tr!('._','-')
 
 task :spec    => "spec:#{vagrant_box}"
 task :default => :spec
