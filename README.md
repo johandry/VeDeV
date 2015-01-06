@@ -64,6 +64,9 @@ VeDeV have been tested on CygWin for Windows Vista 64-bits. These instructions m
     $ wget -O packer.zip https://dl.bintray.com/mitchellh/packer/packer_0.7.5_windows_amd64.zip
     $ unzip packer.zip
     $ rm packer.zip
+
+    # Testing
+    $ packer version
     ```
     On Windows follow these instructions:
     - Download the zip for 32-bit or 64-bit from http://packer.io/downloads
@@ -98,7 +101,7 @@ VeDeV purpose is to be used in Mac OS X and Windows to build, ship and deploy th
 
 Install all the requirements for your OS. See the requirements and instructions above.
 
-Clone the repository:
+Clone the repository and update/install the required gems:
 
     $ git clone https://github.com/johandry/vedev && cd vedev && bundle
 
@@ -109,12 +112,6 @@ List the available packer templates to build a box:
 Build a machine image from the template in the repository, there is no need to write the entire name of the distro:
 
     $ ./vedev build ubuntu-14.1
-
-When you finish, you may clean the packer box with:
-
-    $ ./vedev clean box ubuntu-14.1
-
-Or, you may delete the packer cache or the vagrant environment with the options 'clean cache' and 'clean vagrant'. Or clean it all with 'clean all'.
 
 Check the VeDeV help for more details.
 
@@ -128,7 +125,7 @@ Or, go to the vagrant machine directory and run 'rake':
 
     $ cd build/ubuntu-14.1* && rake
 
-You can create more ServerSpecs adding specs files in the specs directory. For example, do some database testing with: build/ubuntu-14.1*/spec/database_spec.rb
+You can create more ServerSpecs adding specs files in the specs directory, make sure the spec test file ends with _spec.rb. For example, do some database testing with: build/ubuntu-14.1*/spec/database_spec.rb
 
 If the test is success you can login to the vagrant box with:
 
@@ -138,7 +135,17 @@ When you finish, you can stop/halt all the machines or just one with:
 
     $ ./vedev stop ubuntu-14.1
 
-The environment is ready to use it for your development environment, provision it using Docker, Puppet or a simple Shell Script and to add more tests with ServerSpec. Just copy the directory of the vagrant machine inside build, for example build/ubuntu-14.1*, to the development project directory.
+When you finish, you may clean the packer box with:
+
+    $ ./vedev clean box ubuntu-14.1
+
+Or, you may delete the packer cache or the vagrant environment with the options 'clean cache' and 'clean vagrant'. Or clean it all with 'clean all'.
+
+If you did not cleaned the box but clean the vagrant machine, you may initialize it again with:
+
+    $ ./vedev init ubuntu-14.1
+
+After build or initialize the machine, the environment is ready to be used for your development. Provision it using Docker, Puppet or a simple Shell Script and add more spec tests using ServerSpec. Just copy the directory of the vagrant machine inside the build directory, for example build/ubuntu-14.1*, to the development project directory.
 
 ## Tasks
 
