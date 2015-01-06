@@ -141,7 +141,7 @@ When you finish, you may clean the packer box with:
 
 Or, you may delete the packer cache or the vagrant environment with the options 'clean cache' and 'clean vagrant'. Or clean it all with 'clean all'.
 
-If you did not cleaned the box but clean the vagrant machine, you may initialize it again with:
+If you did not clean the box but cleaned the vagrant machine, you can initialize/re-create the vagrant machine  with:
 
     $ ./vedev init ubuntu-14.1
 
