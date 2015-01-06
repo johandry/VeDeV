@@ -47,15 +47,25 @@ The only Linux distributions available to create a box are:
     $ brew cask install vagrant-manager
     ```
     
-### Windows
+### CygWin on Windows
 
-VeDeV have been tested in CygWin on Windows Vista but not in Windows directly.
+VeDeV have been tested on CygWin for Windows Vista 64-bits. These instructions may help with other Linux emulator for Windows or on Windows itself.
 
-* [Ruby](https://www.ruby-lang.org/en/): (Required) Programming language used for VeDeV. There are many ways to install it, if you do not have a favorite, you can install it with [RubyInstaller](http://rubyinstaller.org/).
+* [Ruby](https://www.ruby-lang.org/en/): (Required) Programming language used for VeDeV. In CygWin make sure you install ruby and bundle. On Windows there are many ways to install it, if you do not have a favorite, you can install it with [RubyInstaller](http://rubyinstaller.org/).
     - Download the installer from http://rubyinstaller.org/downloads/
     - Execute the installer and follow the instructions.
 
 * [Packer](http://packer.io/downloads): (Required) Used to create the vagrant box. 
+    In CygWin execute these:
+    ```bash
+    # Check the latest version of Packer for Windows in http://packer.io/downloads
+
+    $ cd /usr/local/bin
+    $ wget -O packer.zip https://dl.bintray.com/mitchellh/packer/packer_0.7.5_windows_amd64.zip
+    $ unzip packer.zip
+    $ rm packer.zip
+    ```
+    On Windows follow these instructions:
     - Download the zip for 32-bit or 64-bit from http://packer.io/downloads
     - Create a directory where ever you want and copy the zip file. I use: C:\Workspace\packer
     - Unzip the file in the packer directory
@@ -66,7 +76,6 @@ VeDeV have been tested in CygWin on Windows Vista but not in Windows directly.
         - Append to the end __;C:\Workspace\packer__ or the directory where the packer directory is. Make sure you put the semicolon ';' before the packer path as delimiter.
         - Click on **OK** until you exit from all the windows.
         - To test, open a command console and type: packer version
-    - If you are using CygWin, make sure the packer directory is in the PATH variable. Edit your profile to include it.
 
 * [VirtualBox](https://www.virtualbox.org/): (Required) Virtualization software or vagrant provider to run the virtual machine.
     - Download the installer for Windows from https://www.virtualbox.org/wiki/Downloads
