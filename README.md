@@ -13,8 +13,6 @@ The only Linux distributions available to create a box are:
 * Ubuntu 14.04.1
 * Ubuntu 14.10
 
-More will be included.
-
 ## Requirements
 
 ### Mac OS X
@@ -29,7 +27,7 @@ More will be included.
     $ brew install caskroom/cask/brew-cask
     ```
 
-* [Packer](http://www.packer.io/): (Required) Used to create the vagrant box. Or, to create the Docker image if you are using Linux.
+* [Packer](http://www.packer.io/): (Required) Used to create the vagrant box.
     ```bash
     $ brew cask install packer
     ```
@@ -51,7 +49,32 @@ More will be included.
     
 ### Windows
 
-_TODO_
+VeDeV have been tested in Windows Vista but I use it most with CygWin. If you find an error in Windows, please, open a [Github Issue](https://github.com/johandry/vedev/issues).
+
+* [Packer](http://packer.io/downloads): (Required) Used to create the vagrant box. 
+    - Download the zip for 32-bit or 64-bit from http://packer.io/downloads
+    - Create a directory where ever you want and copy the zip file. I use: C:\Workspace\packer
+    - Unzip the file in the packer directory
+    - Make sure the directory is in your PATH environment variable:
+        - Go to: **Control Panel** -> **System** -> **Advanced System Settings** -> **Environment Variables**
+        - In **System Variables** search for the **Path** variable
+        - Select it and click on **Edit** button.
+        - Append to the end __;C:\Workspace\packer__ or the directory where the packer directory is. Make sure you put the semicolon ';' before the packer path as delimiter.
+        - Click on **OK** until you exit from all the windows.
+        - To test, open a command console and type: packer version
+    - If you are using CygWin, make sure the packer directory is in the PATH variable. Edit your profile to include it.
+
+* [VirtualBox](https://www.virtualbox.org/): (Required) Virtualization software or vagrant provider to run the virtual machine.
+    - Download the installer for Windows from https://www.virtualbox.org/wiki/Downloads
+    - Execute it and follow the instructions.
+
+* [Vagrant](https://dl.bintray.com/mitchellh/vagrant/vagrant_1.7.1.msi): (Required) Used to manage the virtual machine.
+    - Download the MSI from https://www.vagrantup.com/downloads.html.
+    - Execute it and follow the instructions.
+
+* [Vagrant Manager](http://vagrantmanager.com/windows/): (Optional) GUI for Vagrant. It is optional but would be nice to have it.
+    - Download the latest version from http://vagrantmanager.com/downloads/ or https://github.com/lanayotech/vagrant-manager-windows/releases
+    - Execute the installer and follow the instructions.
 
 ### Linux
 
@@ -67,25 +90,25 @@ Clone the repository:
 
 List the available packer templates to build a box:
 
-    $ ./vedev.rb list build
+    $ ./vedev list build
 
 Build a machine image from the template in the repository, there is no need to write the entire name of the distro:
 
-    $ ./vedev.rb build ubuntu-14.1
+    $ ./vedev build ubuntu-14.1
 
 When you finish, you may clean the packer box with:
 
-    $ ./vedev.rb clean box ubuntu-14.1
+    $ ./vedev clean box ubuntu-14.1
 
 Or, you may delete the packer cache or the vagrant environment with the options 'clean cache' and 'clean vagrant'. Or clean it all with 'clean all'.
 
 Check the VeDeV help for more details.
 
-    $ ./vedev.rb help
+    $ ./vedev help
 
 When the build is ready you can test it with:
 
-    $ ./vedev.rb test ubuntu-14.1
+    $ ./vedev test ubuntu-14.1
 
 Or, go to the vagrant machine directory and run 'rake':
 
@@ -95,11 +118,11 @@ You can create more ServerSpecs adding specs files in the specs directory. For e
 
 If the test is success you can login to the vagrant box with:
 
-    $ ./vedev.rb start ubuntu-14.1
+    $ ./vedev start ubuntu-14.1
 
 When you finish, you can stop/halt all the machines or just one with:
 
-    $ ./vedev.rb stop ubuntu-14.1
+    $ ./vedev stop ubuntu-14.1
 
 The environment is ready to use it for your development environment, provision it using Docker, Puppet or a simple Shell Script and to add more tests with ServerSpec. Just copy the directory of the vagrant machine inside build, for example build/ubuntu-14.1*, to the development project directory.
 
@@ -107,9 +130,11 @@ The environment is ready to use it for your development environment, provision i
 
 - [X] **Testing**: Create a Rake file using ServerSpec to test.
 - [ ] **Push to Atlas**: Once the Vagrant box is ready upload it to Altas (previously VagrantCloud). This is not possible yet. Waiting for Atlas to provide (free) packer push of vagrant-virtualbox boxes.
-- [X] **Options**: Add more options to vedev.rb such as update, init; and improve clean and build options.
-- [X] **More Options**: Add more options to vedev.rb such as up and down, to vagrant up && ssh and vagrant halt.
+- [X] **Options**: Add more options to vedev such as update, init; and improve clean and build options.
+- [X] **More Options**: Add more options to vedev such as up and down, to vagrant up && ssh and vagrant halt.
 - [ ] **Official Boxes**: Allow to use an existing box on Atlas or in the cloud instead of creating your own box.
+- [ ] **AWS**: Add Amazon Web Services as provider.
+- [ ] **CoreOS**: Add CoreOS in the list of Linux distributions.
 
 ## Why VeDeV?
 
