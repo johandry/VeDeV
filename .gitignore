@@ -13,6 +13,6 @@ Trash
 
 build
 
-.Gemfile.*
+Gemfile.lock
 
 output-*
