@@ -5,7 +5,7 @@
 
 VeDeV can be used on OS X and Windows to create a Linux Virtual Environment for Development with a simple command. This virtual environment is used to build, ship and run the developed application with any provisioner such as [Docker](https://www.docker.com/), Puppet, Chef, Salt or a simple script.
 
-It uses [Packer](http://www.packer.io/) to create the Vagrant box that is provisioned with Shell Scrips and [Vagrant](https://www.vagrantup.com/) to manage the virtual machine using [VirtualBox](https://www.virtualbox.org/) as provider. The result is a minimal machine with **Docker** and **Ruby** installed that you can move to your project directory.
+It uses [Packer](http://www.packer.io/) to create the Vagrant box that is provisioned with Shell Scrips and [Vagrant](https://www.vagrantup.com/) to manage the virtual machine using [VirtualBox](https://www.virtualbox.org/) as provider. It also test the created machines with [ServerSpec](http://serverspec.org/). The result is a minimal machine with **Docker** and **Ruby** installed that you can move to your project directory.
 
 The only Linux distributions available to create a box are: 
 * CentOS 6.6
@@ -85,6 +85,12 @@ When the build is ready you can test it with:
 
     $ ./vedev.rb test ubuntu-14.1
 
+Or, go to the vagrant machine directory and run 'rake':
+
+    $ cd build/ubuntu-14.1* && rake
+
+You can create more ServerSpecs adding specs files in the specs directory. For example, do some database testing with: build/ubuntu-14.1*/spec/database_spec.rb
+
 If the test is success you can login to the vagrant box with:
 
     $ ./vedev.rb start ubuntu-14.1
@@ -93,7 +99,7 @@ When you finish, you can stop/halt all the machines or just one with:
 
     $ ./vedev.rb stop ubuntu-14.1
 
-The environment is ready to use it for your development environment, provision it (using Docker or Puppet) and add more tests with ServerSPEC. Just copy the directory of the vagrant machine inside build, example build/ubuntu-14.1*, to the development project directory.
+The environment is ready to use it for your development environment, provision it using Docker, Puppet or a simple Shell Script and to add more tests with ServerSpec. Just copy the directory of the vagrant machine inside build, for example build/ubuntu-14.1*, to the development project directory.
 
 ## Tasks
 
