@@ -49,7 +49,11 @@ The only Linux distributions available to create a box are:
     
 ### Windows
 
-VeDeV have been tested in Windows Vista but I use it most with CygWin. If you find an error in Windows, please, open a [Github Issue](https://github.com/johandry/vedev/issues).
+VeDeV have been tested in CygWin on Windows Vista but not in Windows directly.
+
+* [Ruby](https://www.ruby-lang.org/en/): (Required) Programming language used for VeDeV. There are many ways to install it, if you do not have a favorite, you can install it with [RubyInstaller](http://rubyinstaller.org/).
+    - Download the installer from http://rubyinstaller.org/downloads/
+    - Execute the installer and follow the instructions.
 
 * [Packer](http://packer.io/downloads): (Required) Used to create the vagrant box. 
     - Download the zip for 32-bit or 64-bit from http://packer.io/downloads
@@ -70,7 +74,8 @@ VeDeV have been tested in Windows Vista but I use it most with CygWin. If you fi
 
 * [Vagrant](https://dl.bintray.com/mitchellh/vagrant/vagrant_1.7.1.msi): (Required) Used to manage the virtual machine.
     - Download the MSI from https://www.vagrantup.com/downloads.html.
-    - Execute it and follow the instructions.
+    - Execute it and follow the instructions. This installation may take a while.
+    - To test, open a command console and type: vagrant --version
 
 * [Vagrant Manager](http://vagrantmanager.com/windows/): (Optional) GUI for Vagrant. It is optional but would be nice to have it.
     - Download the latest version from http://vagrantmanager.com/downloads/ or https://github.com/lanayotech/vagrant-manager-windows/releases
@@ -86,7 +91,7 @@ Install all the requirements for your OS. See the requirements and instructions 
 
 Clone the repository:
 
-    $ git clone https://github.com/johandry/vedev && cd vedev
+    $ git clone https://github.com/johandry/vedev && cd vedev && bundle
 
 List the available packer templates to build a box:
 
@@ -149,3 +154,5 @@ The environment is ready to use it for your development environment, provision i
 The creation of the packer templates, scripts and http templates are based on several github projects. This is a project I used to learn packer and I thanks to all those developers that publish their work. 
 
 In the same way, every body is free to use what I did to improve it or learn from it.
+
+If you find an error, please, open a [Github Issue](https://github.com/johandry/vedev/issues).

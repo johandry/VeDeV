@@ -33,7 +33,7 @@ module VeDeV
 
   def get_distros(name)
     # If name is '' will return all the distros
-    Dir[Dir.pwd + "/packer/templates/#{name}*.json"].sort.map { |file_name|
+    Dir[base_path + "/packer/templates/#{name}*.json"].sort.map { |file_name|
       file_name.gsub(%r|.*/packer/templates/(.*).json|,'\1')
     }
   end
@@ -53,13 +53,23 @@ module VeDeV
     if distros.length < 1
       error "Sorry, there is no template for a distro starting with '#{name}'. "
       info "The available distros are:"
-      Dir[Dir.pwd + '/packer/templates/*.json'].sort.each do |distro|
+      Dir[base_path + '/packer/templates/*.json'].sort.each do |distro|
         say "\t\t* ", :green
         say "#{distro.gsub(%r|.*/packer/templates/(.*).json|,'\1')}"
       end
       return nil
     end
     distros[0]
+  end
+
+  def base_path
+    if (RUBY_PLATFORM =~ /cygwin/) != nil
+      ''
+    elsif (RUBY_PLATFORM =~ /darwin/) != nil
+      Dir.pwd
+    else
+      Dir.pwd
+    end
   end
 
   class Clean < Thor
@@ -74,7 +84,7 @@ module VeDeV
       end
 
       date = Time.now.strftime("%Y%m%d")
-      FileUtils.mkdir_p Dir.pwd + "/Trash/#{date}"
+      FileUtils.mkdir_p base_path + "/Trash/#{date}"
 
       box distro
       cache
@@ -89,24 +99,24 @@ module VeDeV
       end
 
       date = Time.now.strftime("%Y%m%d")
-      FileUtils.mkdir_p Dir.pwd + "/Trash/#{date}"
+      FileUtils.mkdir_p base_path + "/Trash/#{date}"
 
       if distro.upcase != "all".upcase
-        if Dir.glob(Dir.pwd + "/vagrant/boxes/#{distro}.box").empty?
+        if Dir.glob(base_path + "/vagrant/boxes/#{distro}.box").empty?
           info "No box for #{distro} to clean"
         else 
           warning "Moving 1 box to Trash/#{date}/boxes"
-          FileUtils.mkdir_p Dir.pwd + "/Trash/#{date}/boxes"
-          FileUtils.mv Dir.pwd + "/vagrant/boxes/#{distro}.box", Dir.pwd + "/Trash/#{date}/boxes", :force => true
+          FileUtils.mkdir_p base_path + "/Trash/#{date}/boxes"
+          FileUtils.mv base_path + "/vagrant/boxes/#{distro}.box", base_path + "/Trash/#{date}/boxes", :force => true
         end
       else
-        if Dir.glob(Dir.pwd + '/vagrant/boxes/*.box').empty?
+        if Dir.glob(base_path + '/vagrant/boxes/*.box').empty?
           info "No boxes to clean"
         else
-          box_count = Dir.glob(Dir.pwd + '/vagrant/boxes/*.box').length
+          box_count = Dir.glob(base_path + '/vagrant/boxes/*.box').length
           warning "Moving #{box_count} boxes to Trash/#{date}/boxes"
-          FileUtils.mkdir_p Dir.pwd + "/Trash/#{date}/boxes"
-          FileUtils.mv Dir.glob(Dir.pwd + '/vagrant/boxes/*.box'), Dir.pwd + "/Trash/#{date}/boxes", :force => true
+          FileUtils.mkdir_p base_path + "/Trash/#{date}/boxes"
+          FileUtils.mv Dir.glob(base_path + '/vagrant/boxes/*.box'), base_path + "/Trash/#{date}/boxes", :force => true
         end
       end
     end
@@ -114,13 +124,13 @@ module VeDeV
     desc "cache", "Clean (moving to a Trash directory) the entire packer cache."
     def cache()
       date = Time.now.strftime("%Y%m%d")
-      FileUtils.mkdir_p Dir.pwd + "/Trash/#{date}"
+      FileUtils.mkdir_p base_path + "/Trash/#{date}"
 
-      if ! File.directory?(Dir.pwd + '/packer_cache')
+      if ! File.directory?(base_path + '/packer_cache')
         info "No packer cache to clean"
       else
         warning "Moving Packer Cache to Trash/#{date}"
-        FileUtils.mv Dir.pwd + '/packer_cache', Dir.pwd + "/Trash/#{date}", :force => true
+        FileUtils.mv base_path + '/packer_cache', base_path + "/Trash/#{date}", :force => true
       end
     end
 
@@ -132,22 +142,22 @@ module VeDeV
       end
 
       date = Time.now.strftime("%Y%m%d")
-      FileUtils.mkdir_p Dir.pwd + "/Trash/#{date}"
+      FileUtils.mkdir_p base_path + "/Trash/#{date}"
 
       total = `vagrant box list | grep -v 'no installed boxes' | wc -l | sed 's/ //g'`.chop
       count = 0
 
-      if File.directory?(Dir.pwd + '/vagrant')
+      if File.directory?(base_path + '/vagrant')
         if distro.upcase != "all".upcase
-          if Dir.glob(Dir.pwd + "/build/#{distro}").empty?
+          if Dir.glob(base_path + "/build/#{distro}").empty?
             info "No vagrant box for #{distro}"
           else
             count = 1
-            status = clean_vagrant_box(Dir.pwd + "/build/#{distro}", date)
+            status = clean_vagrant_box(base_path + "/build/#{distro}", date)
             cound = 0 if not status
           end
         else
-          vagrant_boxes_dir = Dir[File.join(Dir.pwd + '/build/', '*')].select { |file| File.directory?(file) && file !~ /\/vagrant\/boxes$/ }
+          vagrant_boxes_dir = Dir[File.join(base_path + '/build/', '*')].select { |file| File.directory?(file) && file !~ /\/vagrant\/boxes$/ }
           count = vagrant_boxes_dir.length
           vagrant_boxes_dir.each do |box|
             status = clean_vagrant_box(box, date)
@@ -178,12 +188,12 @@ module VeDeV
         else
           error "There is no 'vagrant-#{box_name}' box to destroy or remove"
         end
-        if File.directory?(Dir.pwd + "/Trash/#{date}/#{box_name}")
-          FileUtils.remove_dir(Dir.pwd + "/Trash/#{date}/#{box_name}")
+        if File.directory?(base_path + "/Trash/#{date}/#{box_name}")
+          FileUtils.remove_dir(base_path + "/Trash/#{date}/#{box_name}")
           warning "Removed a previous version of vagrant directory #{box_name} in Trash/#{date}"
         end
         warning "Moving vagrant directory '#{box}' to Trash/#{date}"
-        FileUtils.mv box, Dir.pwd + "/Trash/#{date}", :force => true
+        FileUtils.mv box, base_path + "/Trash/#{date}", :force => true
         status
       end
   end
@@ -194,7 +204,7 @@ module VeDeV
     desc "build", "List all the available distros to build"
     def build
       info "The available distros are:"
-      Dir[Dir.pwd + '/packer/templates/*.json'].sort.each do |distro|
+      Dir[base_path + '/packer/templates/*.json'].sort.each do |distro|
         say "\t\t* ", :green
         say "#{distro.gsub(%r|.*/packer/templates/(.*).json|,'\1')}"
       end
@@ -203,7 +213,7 @@ module VeDeV
     desc "init", "List all the available distros to initialize"
     def init
       info "The available boxes are:"
-      Dir[Dir.pwd + '/vagrant/boxes/*.box'].sort.each do |distro|
+      Dir[base_path + '/vagrant/boxes/*.box'].sort.each do |distro|
         say "\t\t* ", :green
         say "#{distro.gsub(%r|.*/vagrant/boxes/(.*).box|,'\1')}"
       end
@@ -357,7 +367,7 @@ module VeDeV
         distros = get_distros('')
         distros.each do |distro|
           hostname = distro.tr('._','-')
-          Dir.chdir Dir.pwd + "/build/#{distro}" do
+          Dir.chdir base_path + "/build/#{distro}" do
             info "Starting #{distro}"
             stat = system "vagrant up 'vagrant-#{hostname}'"
             status = status && stat
@@ -373,7 +383,7 @@ module VeDeV
         if distro
           hostname = distro.tr('._','-')
           info "Starting #{distro}"
-          Dir.chdir Dir.pwd + "/build/#{distro}" do
+          Dir.chdir base_path + "/build/#{distro}" do
             system "vagrant up 'vagrant-#{hostname}'"
             system "vagrant ssh"
           end
@@ -390,7 +400,7 @@ module VeDeV
       if distro.upcase == "all".upcase
         distros = get_distros('')
         distros.each do |distro|
-          Dir.chdir Dir.pwd + "/build/#{distro}" do
+          Dir.chdir base_path + "/build/#{distro}" do
             info "Shutting down the distro #{distro}"
             system "vagrant halt"
           end
@@ -399,7 +409,7 @@ module VeDeV
       else
         distro = check_distro(distro)
         if distro
-          Dir.chdir Dir.pwd + "/build/#{distro}" do
+          Dir.chdir base_path + "/build/#{distro}" do
             info "Shutting down the distro #{distro}"
             system "vagrant halt"
           end
@@ -419,11 +429,11 @@ module VeDeV
     private
       def paker_build(distro)
         status = nil
-        if ! Dir.glob(Dir.pwd + "/vagrant/boxes/#{distro}.box").empty?
+        if ! Dir.glob(base_path + "/vagrant/boxes/#{distro}.box").empty?
           error "There is a vagrant box for #{distro}. Clean it before build it."
         else
           info "Building vagrant box for distro #{distro}"
-          status = system "packer build -var-file=" + Dir.pwd + "/packer/vars/global_variables.json " + Dir.pwd + "/packer/templates/#{distro}.json"
+          status = system "packer build -var-file=" + base_path + "/packer/vars/global_variables.json " + base_path + "/packer/templates/#{distro}.json"
           if status
             info "Vagrant box for distro #{distro} is done"
           else
@@ -435,7 +445,7 @@ module VeDeV
 
       def packer_validate(distro)
         info "Validating distro #{distro}"
-        if system "packer validate -var-file=" + Dir.pwd + "/packer/vars/global_variables.json " + Dir.pwd + "/packer/templates/#{distro}.json"
+        if system "packer validate -var-file=" + base_path + "/packer/vars/global_variables.json " + base_path + "/packer/templates/#{distro}.json"
           info "Template for distro #{distro} is valid"
         else
           error "Template for #{distro} is not valid"
@@ -444,7 +454,7 @@ module VeDeV
 
       def packer_check_iso(distro)
         info "Checking if the ISO URL exists"
-        template = Pathname.new(Dir.pwd + "/packer/templates/#{distro}.json")
+        template = Pathname.new(base_path + "/packer/templates/#{distro}.json")
         json = JSON.parse(template.read)
         iso_url = json['variables']['iso_url']
         url_exist iso_url
@@ -474,17 +484,17 @@ module VeDeV
         status = false
         hostname = distro.tr('._','-')
         # Add the box to vagrant
-        if Dir.glob(Dir.pwd + "/vagrant/boxes/#{distro}.box").empty?
+        if Dir.glob(base_path + "/vagrant/boxes/#{distro}.box").empty?
           error "There is no vagrant box for #{distro}. Build it before initialize it."
-        elsif ! Dir.glob(Dir.pwd + "/build/#{distro}/Vagrantfile").empty?
+        elsif ! Dir.glob(base_path + "/build/#{distro}/Vagrantfile").empty?
           error "There may be a vagrant environment for #{distro}. Clean it before initialize it."
         else
           info "Creating vagrant environment for distro #{distro}"
-          status = system "vagrant box add 'vagrant-#{distro}' '" + Dir.pwd + "/vagrant/boxes/#{distro}.box'"
+          status = system "vagrant box add 'vagrant-#{distro}' '" + base_path + "/vagrant/boxes/#{distro}.box'"
           if status
             # Initialize the vagrant machine
-            FileUtils.mkdir_p Dir.pwd + "/build/#{distro}"
-            Dir.chdir Dir.pwd + "/build/#{distro}" do
+            FileUtils.mkdir_p base_path + "/build/#{distro}"
+            Dir.chdir base_path + "/build/#{distro}" do
               status = system "vagrant init --minimal --force 'vagrant-#{distro}'"
               # Overwrite the Vagrantfile file
               File.open('Vagrantfile', 'w') { |vfile|
@@ -507,11 +517,11 @@ module VeDeV
             end
             # Create the ServerSPEC files
             info "Setting up the ServerSPEC tests"
-            FileUtils.cp Dir.pwd + "/vagrant/serverspec/Rakefile", Dir.pwd + "/build/#{distro}/"
-            FileUtils.cp Dir.pwd + "/vagrant/serverspec/.rspec",   Dir.pwd + "/build/#{distro}/"
-            FileUtils.mkdir_p Dir.pwd + "/build/#{distro}/spec"
-            FileUtils.cp Dir.pwd + "/vagrant/serverspec/spec/spec_helper.rb", Dir.pwd + "/build/#{distro}/spec/"
-            FileUtils.cp Dir.pwd + "/vagrant/serverspec/spec/base_spec.rb",   Dir.pwd + "/build/#{distro}/spec/"
+            FileUtils.cp base_path + "/vagrant/serverspec/Rakefile", base_path + "/build/#{distro}/"
+            FileUtils.cp base_path + "/vagrant/serverspec/.rspec",   base_path + "/build/#{distro}/"
+            FileUtils.mkdir_p base_path + "/build/#{distro}/spec"
+            FileUtils.cp base_path + "/vagrant/serverspec/spec/spec_helper.rb", base_path + "/build/#{distro}/spec/"
+            FileUtils.cp base_path + "/vagrant/serverspec/spec/base_spec.rb",   base_path + "/build/#{distro}/spec/"
           else
             error "Vagrant box for distro #{distro} could not be added"
           end
@@ -522,10 +532,10 @@ module VeDeV
       def vagrant_validate(distro)
         status = true
         # If there is a distro box and a Vagrantfile, then the machine should be ready
-        if  ! Dir.glob(Dir.pwd + "/vagrant/boxes/#{distro}.box").empty? && 
-            ! Dir.glob(Dir.pwd + "/build/#{distro}/Vagrantfile").empty? &&
-            ! Dir.glob(Dir.pwd + "/build/#{distro}/Rakefile").empty?
-          Dir.chdir Dir.pwd + "/build/#{distro}" do
+        if  ! Dir.glob(base_path + "/vagrant/boxes/#{distro}.box").empty? && 
+            ! Dir.glob(base_path + "/build/#{distro}/Vagrantfile").empty? &&
+            ! Dir.glob(base_path + "/build/#{distro}/Rakefile").empty?
+          Dir.chdir base_path + "/build/#{distro}" do
             status = system "rake"
           end
           if status
