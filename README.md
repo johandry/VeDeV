@@ -39,7 +39,7 @@ More will be included.
     $ brew cask install vagrant
     ```
 
-* [VirtualBox](https://www.virtualbox.org/): (Required) Virtualization software to run the virtual machine.
+* [VirtualBox](https://www.virtualbox.org/): (Required) Virtualization software or vagrant provider to run the virtual machine.
     ```bash
     $ brew cask install virtualbox
     ```
@@ -58,6 +58,8 @@ _TODO_
 VeDeV purpose is to be used in Mac OS X and Windows to build, ship and deploy the projects with Docker using a Linux box. If you are using Linux then use Docker directly or other such as Puppet, Chef or Salt.
 
 ## Usage
+
+Install all the requirements for your OS. See the requirements and instructions above.
 
 Clone the repository:
 
@@ -118,6 +120,6 @@ The environment is ready to use it for your development environment, provision i
 
 ## Thanks
 
-The creation of the packer templates, scripts and http templates are based on several github projects. This is a project I used to learn packer and I thanks to all the developers that publish their work. 
+The creation of the packer templates, scripts and http templates are based on several github projects. This is a project I used to learn packer and I thanks to all those developers that publish their work. 
 
-In the same way, every body is free to use what I did to improve it or learn.
+In the same way, every body is free to use what I did to improve it or learn from it.
