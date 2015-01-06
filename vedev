@@ -64,7 +64,7 @@ module VeDeV
 
   def base_path
     if (RUBY_PLATFORM =~ /cygwin/) != nil
-      ''
+      '.'
     elsif (RUBY_PLATFORM =~ /darwin/) != nil
       Dir.pwd
     else
