@@ -116,7 +116,8 @@ The environment is ready to use it for your development environment, provision i
 1. I use to develop the same project in Mac OS or Windows (CygWin). VeDeV help me to have a virtual box, a single development environment, no matter what OS I am using.
 2. Allows me to test my application in several Linux machines.
 3. I can re-build the environment when there is a new version or packages update. Don't waste time during the provisioning, updating the vagrant machine.
-4. With Docker we can use any Linux, including some light ones, but this allow me to use Docker, Puppet or any provisioner on several 'heavy' and powerful Linux OS.
+4. We can use Docker on any Linux, including some light ones, but VeDeV allow me to use Docker on several 'heavy' and powerful Linux OS with no limitation of resources.
+5. The idea is to use Docker as provisioner for a development project but with VeDeV I can switch from Docker to Puppet or any other provisioner, using a powerful Linux OS.
 
 ## Thanks
 
