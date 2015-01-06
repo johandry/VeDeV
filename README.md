@@ -3,19 +3,15 @@
 [![Build Status](http://img.shields.io/travis/johandry/vedev.svg)][travis]
 [travis]: https://travis-ci.org/johandry/vedev
 
-Create a Virtual Environment for Development for OS X and Windows. Uses [Packer](http://www.packer.io/) to create the Vagrant Box, [Vagrant](https://www.vagrantup.com/) to manage the virtual machine, [VirtualBox](https://www.virtualbox.org/) as the virtualization software, Scripts to provision the new box and [Docker](https://www.docker.com/) to build, ship and run the developed application.
+VeDeV can be used to create a Linux Virtual Environment for Development on OS X and Windows. With a command you can create a virtual machine with Linux so you can build, ship and run the developed application with any provisioner such as [Docker](https://www.docker.com/), Puppet, Chef, Salt or a simple script.
 
-As Docker require a virtual machine manager in OS X and Windows, VeDeV use Vagrant for this purpose. Instead of use a pre-build and shared box, you can create your own with Packer using what ever OS you like with the same requirements for the developed application. In case you are using Linux then ignore Vagrant and VirtualBox, and use Docker directly. 
-
-The initial provisioning of the box is done with shell scripts on Packer. Later you can provision the box with shell or Puppet on Vagrant. The project requirements can be provisioned with Docker.
+It uses [Packer](http://www.packer.io/) to create the Vagrant box, [Vagrant](https://www.vagrantup.com/) to manage the virtual machine, [VirtualBox](https://www.virtualbox.org/) as the virtualization software, Scripts to provision the Vagrant box. They are minimal machines with **Docker** and **Ruby** installed. 
 
 The only Linux distros available to create a box are: 
 * CentOS 6.6
 * CentOS 7.0
 * Ubuntu 14.04.1
 * Ubuntu 14.10
-
-These are the only I need, so far, but I can add more in the future. They are minimal boxes with **Docker** and **Ruby** installed.
 
 ## Requirements
 
@@ -99,6 +95,14 @@ Then the environment is ready to use it for your development environment, provis
 - [ ] **Push to Atlas**: Once the Vagrant box is ready upload it to Altas (previously VagrantCloud). This is not possible yet. Waiting for Atlas to provide (free) packer push of vagrant-virtualbox boxes.
 - [X] **Options**: Add more options to vedev.rb such as update, init; and improve clean and build options.
 - [ ] **More Options**: Add more options to vedev.rb such as up and down, to vagrant up && ssh and vagrant halt.
+- [ ] **Official Boxes**: Allow to use an existing box on Atlas or in the cloud instead of creating your own box.
+
+## Why VeDeV?
+
+1. I use to develop the same project in Mac OS or Windows (CygWin). VeDeV help me to have a virtual box that I can re-build and update from any OS.
+2. Allows me to test my application in several Linux.
+3. I can re-build the environment when there is a new version or major update. Don't wasting time during the provisioning to update the vagrant machine.
+4. With Docker we can use any Linux, even some light ones, but this allow me to use Docker, Puppet on several 'heavy' and powerful Linux.
 
 ## Thanks
 
