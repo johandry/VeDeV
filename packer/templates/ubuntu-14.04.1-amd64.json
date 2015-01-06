@@ -61,6 +61,6 @@
   "post-processors": [{
     "type": "vagrant",
     "compression_level": "{{user `compression_level`}}",
-    "output": "build/boxes/{{user `distro_name`}}.box"
+    "output": "vagrant/boxes/{{user `distro_name`}}.box"
   }]
 }

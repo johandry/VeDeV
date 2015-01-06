@@ -11,6 +11,8 @@ packer_cache
 
 Trash
 
+build
+
 .Gemfile.*
 
 output-*
