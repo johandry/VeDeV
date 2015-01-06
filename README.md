@@ -3,9 +3,9 @@
 [![Build Status](http://img.shields.io/travis/johandry/vedev.svg)][travis]
 [travis]: https://travis-ci.org/johandry/vedev
 
-VeDeV can be used to create a Linux Virtual Environment for Development on OS X and Windows. With a command you can create a virtual machine with Linux so you can build, ship and run the developed application with any provisioner such as [Docker](https://www.docker.com/), Puppet, Chef, Salt or a simple script.
+VeDeV can be used on OS X and Windows to create a Linux Virtual Environment for Development with simple command. This virtual environment is used to build, ship and run the developed application with any provisioner such as [Docker](https://www.docker.com/), Puppet, Chef, Salt or a simple script.
 
-It uses [Packer](http://www.packer.io/) to create the Vagrant box, [Vagrant](https://www.vagrantup.com/) to manage the virtual machine, [VirtualBox](https://www.virtualbox.org/) as the virtualization software, Scripts to provision the Vagrant box. They are minimal machines with **Docker** and **Ruby** installed. 
+It uses [Packer](http://www.packer.io/) to create the Vagrant box, [Vagrant](https://www.vagrantup.com/) to manage the virtual machine, [VirtualBox](https://www.virtualbox.org/) as the virtualization software and Scripts to provision the Vagrant box. They are minimal machines with **Docker** and **Ruby** installed. 
 
 The only Linux distros available to create a box are: 
 * CentOS 6.6
