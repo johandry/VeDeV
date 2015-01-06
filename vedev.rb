@@ -350,6 +350,66 @@ module VeDeV
       status
     end
 
+    desc "start [DISTRO]", "Start up and open a ssh session to the machine. If all then just start up all the machines."
+    def start(distro='all')
+      status = true
+      if distro.upcase == "all".upcase
+        distros = get_distros('')
+        distros.each do |distro|
+          hostname = distro.tr('._','-')
+          Dir.chdir Dir.pwd + "/build/#{distro}" do
+            info "Starting #{distro}"
+            stat = system "vagrant up 'vagrant-#{hostname}'"
+            status = status && stat
+          end
+        end
+        if status
+          info "All the distros are running. Open a ssh session with 'vagrant ssh' in the vagrant directory."
+        else
+          error "Some distros are not running."
+        end
+      else
+        distro = check_distro(distro)
+        if distro
+          hostname = distro.tr('._','-')
+          info "Starting #{distro}"
+          Dir.chdir Dir.pwd + "/build/#{distro}" do
+            system "vagrant up 'vagrant-#{hostname}'"
+            system "vagrant ssh"
+          end
+        else
+          status = false
+        end
+      end
+      status
+    end
+
+    desc "stop [DISTRO]", "Halt the DISTRO machine or all the machines that are up"
+    def stop(distro='all')
+      status = true
+      if distro.upcase == "all".upcase
+        distros = get_distros('')
+        distros.each do |distro|
+          Dir.chdir Dir.pwd + "/build/#{distro}" do
+            info "Shutting down the distro #{distro}"
+            system "vagrant halt"
+          end
+        end
+        info "All the running distros were shut down."
+      else
+        distro = check_distro(distro)
+        if distro
+          Dir.chdir Dir.pwd + "/build/#{distro}" do
+            info "Shutting down the distro #{distro}"
+            system "vagrant halt"
+          end
+        else
+          status = false
+        end
+      end
+      status
+    end
+
     desc "list SUBCOMMAND ...ARGS", "List available distros to build or boxes to initialize"
     subcommand "list", List
 
