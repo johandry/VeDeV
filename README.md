@@ -5,7 +5,7 @@
 
 VeDeV can be used on OS X and Windows to create a Linux Virtual Environment for Development with a simple command. This virtual environment is used to build, ship and run the developed application with any provisioner such as [Docker](https://www.docker.com/), Puppet, Chef, Salt or a simple script.
 
-It uses [Packer](http://www.packer.io/) to create the Vagrant box that is provisioned with Shell Scrips and [Vagrant](https://www.vagrantup.com/) to manage the virtual machine using [VirtualBox](https://www.virtualbox.org/) as provider. It also test the created machines with [ServerSpec](http://serverspec.org/). The result is a minimal machine with **Docker** and **Ruby** installed that you can move to your project directory.
+VeDeV is a project to integrate Packer, Vagrant & Docker. It uses [Packer](http://www.packer.io/) to create the Vagrant box that is provisioned with Shell Scrips and [Vagrant](https://www.vagrantup.com/) to manage the virtual machine using [VirtualBox](https://www.virtualbox.org/) as provider. It also test the created machines with [ServerSpec](http://serverspec.org/). The result is a minimal machine with **Docker** and **Ruby** installed that you can move to your project directory.
 
 The only Linux distributions available to create a box are: 
 * CentOS 6.6
@@ -156,14 +156,17 @@ After build or initialize the machine, the environment is ready to be used for y
 - [ ] **Official Boxes**: Allow to use an existing box on Atlas or in the cloud instead of creating your own box.
 - [ ] **AWS**: Add Amazon Web Services as provider.
 - [ ] **CoreOS**: Add CoreOS in the list of Linux distributions.
+- [ ] **Sandbox**: Create dockerfiles provision and to create sandboxes for several kind of projects such as: NodeJS/AngularJS, Perl/Dancer, Ruby/Rails/Sinatra, etc...
 
 ## Why VeDeV?
 
-1. I use to develop the same project in Mac OS or Windows (CygWin). VeDeV help me to have a virtual box, a single development environment, no matter what OS I am using.
-2. Allows me to test my application in several Linux machines.
-3. I can re-build the environment when there is a new version or packages update. Don't waste time during the provisioning, updating the vagrant machine.
-4. We can use Docker on any Linux, including some light ones, but VeDeV allow me to use Docker on several 'heavy' and powerful Linux OS with no limitation of resources.
-5. The idea is to use Docker as provisioner for a development project but with VeDeV I can switch from Docker to Puppet or any other provisioner, using a powerful Linux OS.
+VeDeV is an application to manage Packer and Vagrant, to build, initialize and start up virtual machines with the preferred Linux distribution. All this, to have a **non-lightweight** development environment to use Docker. VeDeV can be used instead of boot2docker but using the OS you want and using the advantages of vagrant. Advantages such as share the guest file system with the host. It is not lightweight, but this is an advantage, so we can use the guest OS for more than Docker stuff, maybe provision with Puppet and have a regular production environment.
+
+VeDeV can be used in Mac OS X or Windows (CygWin), this allow a developer or a team to use the same development environment in any platform.
+
+With VeDeV you can create several OS images to deploy, build and **test** your application. Then you can select which OS is better or modify your application to work fine in all of them.
+
+I can re-build the environment when there is a new OS version or many packages to update. Don't waste time during the provisioning, updating the vagrant machine, just re-build the vagrant box with the new OS version and with all the packages updated.
 
 ## Thanks
 
