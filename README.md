@@ -1,7 +1,7 @@
 # VeDeV: Virtual Environment for Development
 
-[![Build Status](http://img.shields.io/travis/johandry/vedev.svg)][travis]
-[travis]: https://travis-ci.org/johandry/vedev
+[![Build Status](http://img.shields.io/travis/johandry/VeDeV.svg)][travis]
+[travis]: https://travis-ci.org/johandry/VeDeV
 
 VeDeV can be used on OS X and Windows to create a Linux Virtual Environment for Development with a simple command. This virtual environment is used to build, ship and run the developed application with any provisioner such as [Docker](https://www.docker.com/), Puppet, Chef, Salt or a simple script.
 
