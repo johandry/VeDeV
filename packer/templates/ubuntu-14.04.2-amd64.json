@@ -1,0 +1,66 @@
+{
+  "variables": {
+    "iso_url": "http://releases.ubuntu.com/14.04.2/ubuntu-14.04.2-server-amd64.iso",
+    "iso_checksum": "8acd2f56bfcba2f7ac74a7e4a5e565ce68c024c38525c0285573e41c86ae90c0",
+    "iso_checksum_type": "sha256",
+    "distro_name": "ubuntu-14.04.2-amd64",
+
+    "compression_level":  "global_variable",
+    "cpus":               "global_variable",
+    "disk_size":          "global_variable",
+    "headless":           "global_variable",
+    "memory":             "global_variable"
+  },
+  "builders": [{
+    "type": "virtualbox-iso",
+    "guest_os_type": "Ubuntu_64",
+    "iso_url": "{{ user `iso_url` }}",
+    "iso_checksum": "{{ user `iso_checksum` }}",
+    "iso_checksum_type": "{{ user `iso_checksum_type` }}",
+    "output_directory": "output-{{user `distro_name`}}",
+    "vm_name": "packer-{{user `distro_name`}}",
+    "disk_size": "{{user `disk_size`}}",
+    "headless": "{{user `headless`}}",
+    "http_directory": "packer/http",
+    "boot_wait": "5s",
+    "boot_command": [
+      "<esc><wait>",
+      "<esc><wait>",
+      "<enter><wait>",
+      "install ",
+      "auto-install/enable=true ",
+      "debconf/priority=critical ",
+      "preseed/url=http://{{.HTTPIP}}:{{.HTTPPort}}/ubuntu/preseed-14.04.2.cfg ",
+      "biosdevname=0 ",
+      "<enter>"
+    ],
+    "ssh_wait_timeout": "60m",
+    "ssh_username": "vagrant",
+    "ssh_password": "vagrant",
+    "shutdown_command": "sudo poweroff",
+    "vboxmanage": [
+      ["modifyvm", "{{.Name}}", "--memory", "{{user `memory`}}"],
+      ["modifyvm", "{{.Name}}", "--cpus", "{{user `cpus`}}"]
+    ]
+  }],
+  "provisioners": [{
+    "type": "shell",
+    "execute_command": "echo 'vagrant' | {{.Vars}} sudo -E -S bash '{{.Path}}'",
+    "scripts": [
+      "packer/scripts/ubuntu/base.sh",
+      "packer/scripts/ubuntu/virtualbox.sh",
+      "packer/scripts/common/vagrant.sh",
+      "packer/scripts/common/sshd.sh",
+      "packer/scripts/ubuntu/update.sh",
+      "packer/scripts/ubuntu/ruby.sh",
+      "packer/scripts/ubuntu/docker.sh",
+      "packer/scripts/ubuntu/cleanup.sh",
+      "packer/scripts/common/minimize.sh"
+    ]
+  }],
+  "post-processors": [{
+    "type": "vagrant",
+    "compression_level": "{{user `compression_level`}}",
+    "output": "vagrant/boxes/{{user `distro_name`}}.box"
+  }]
+}
